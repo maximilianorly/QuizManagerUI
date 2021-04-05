@@ -11,7 +11,7 @@
             </section>
 
             <section class="log-in__user-data-fields">
-                <h6 class="log-in__errorMessage" v-if="errorMessage !== null">
+                <h6 class="log-in__errorMessage" v-if="errorMessage !== ''">
                     {{ errorMessage }}
                 </h6>
                 <div class="log-in__user-data-input-container">
@@ -37,6 +37,7 @@
     import IUser from "../interfaces/IUser";
     import IUserCredentials from "../interfaces/IUserCredentials";
     import UserService from "../services/UserService";
+    import sessionState from "../store/SessionState";
 
     @Component({
         components: {
@@ -44,31 +45,35 @@
         },
     })
     export default class LogIn extends Vue {
-        private user: IUser = {};
+        private currentUser: IUser = {};
         private userCredentials: IUserCredentials = { Username: "", Password: ""};
         private userService: UserService = new UserService();
-        private errorMessage: string = null;
+        private errorMessage: string = '';
+
+        private get user() {
+            return sessionState.state.User;
+        }
 
         // Promise<boolean>
         private logInWithSuppliedCredentials(Credentials: IUserCredentials) {
-            console.log(Credentials);
             this.userService.verifyCredentials(Credentials).then((response) => {
                 if (response !== null) {
                     if (!response) {
                         this.errorMessage = "Incorrect User and Password combination!"
                     }
                     else {
-                        const user = response.data as IUser;
-                        this.errorMessage = null;
-                        this.setAuthenticatedUserAsLoggedInUser(user)
+                        const _user = response.data;
+                        this.errorMessage = '';
                         console.log("successss!");
+                        // this.nextRoute();
                     }
                 }
             });
         }
 
-        private setAuthenticatedUserAsLoggedInUser(user: IUser) {
-        }
+        // private nextRoute() {
+        //     this.$router.push()
+        // }
     };
 </script>
 
