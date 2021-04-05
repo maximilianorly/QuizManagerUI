@@ -7,15 +7,21 @@ export default class UserService {
     private readonly controllerName: string = "User";
 
     // Promise<void>
-    public async verifyCredentials(Credentials: IUserCredentials): Promise<boolean> {
+    public async verifyCredentials(Credentials: IUserCredentials): Promise<any> {
         let authenticationSuccessful: boolean = false;
 
         await axios
-        .post(`${this.portApi}/api/${this.controllerName}`, JSON.parse(JSON.stringify(Credentials)))
+        .post(`${this.portApi}/api/${this.controllerName}`, Credentials, {headers: { "Access-Control-Allow-Origin": "*" }})
         .then(response => {
-            console.log(response);
+            console.log(response.data);
             if (response.status === 200) {
                 authenticationSuccessful = response.data as boolean;
+
+                if (authenticationSuccessful && response.data !== "") {
+                    const user = response.data as IUser;
+                    console.log(user);
+                    return user;
+                }
             }
         });
 

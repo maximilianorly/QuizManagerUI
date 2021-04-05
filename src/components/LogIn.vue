@@ -11,6 +11,9 @@
             </section>
 
             <section class="log-in__user-data-fields">
+                <h6 class="log-in__errorMessage" v-if="errorMessage !== null">
+                    {{ errorMessage }}
+                </h6>
                 <div class="log-in__user-data-input-container">
                     <input type="text" placeholder="Username" v-model="userCredentials.Username" class="log-in__user-data-input">
                 </div>
@@ -44,14 +47,27 @@
         private user: IUser = {};
         private userCredentials: IUserCredentials = { Username: "", Password: ""};
         private userService: UserService = new UserService();
+        private errorMessage: string = null;
 
         // Promise<boolean>
         private logInWithSuppliedCredentials(Credentials: IUserCredentials) {
             console.log(Credentials);
-            return this.userService.verifyCredentials(Credentials);
-            // .then(async() => {
+            this.userService.verifyCredentials(Credentials).then((response) => {
+                if (response !== null) {
+                    if (!response) {
+                        this.errorMessage = "Incorrect User and Password combination!"
+                    }
+                    else {
+                        const user = response.data as IUser;
+                        this.errorMessage = null;
+                        this.setAuthenticatedUserAsLoggedInUser(user)
+                        console.log("successss!");
+                    }
+                }
+            });
+        }
 
-            // });
+        private setAuthenticatedUserAsLoggedInUser(user: IUser) {
         }
     };
 </script>
