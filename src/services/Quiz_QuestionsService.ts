@@ -10,7 +10,6 @@ export default class QuestionsService {
 
     // Promise<void>
     public async getActiveQuestions(): Promise<Array<IQuestion>> {
-        console.log(3);
         let _activeQuestions;
         
         await axios

@@ -67,7 +67,6 @@
         }
 
         private getQuizQuestions() {
-            console.log(1);
             this.quizService.getActiveQuestions()
             .then(() => {
 

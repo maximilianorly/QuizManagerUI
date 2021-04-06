@@ -66,7 +66,6 @@
             .then(() => {
                 if (sessionState.user.id) {
                     this.errorMessage = '';
-                    console.log("successss!");
                     this.getUserAccessLevel(this.user.id);
                 }
             });
@@ -75,8 +74,6 @@
         private getUserAccessLevel(UserId: number) {
             this.userAccessService.getUserAccessLevelByUserId(UserId)
             .then(() => {
-                console.log('ere')
-                console.dir(sessionState.state.UserHasAccess)
                 if (sessionState.state.UserHasAccess.accessLevelId) {
                     this.nextRoute();
                 }

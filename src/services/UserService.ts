@@ -12,7 +12,6 @@ export default class UserService {
         return sessionState.state.User;
     }
     private setAuthenticatedUserAsLoggedInUser(LoggedInUser: IUser) {
-        console.dir(LoggedInUser);
         sessionState.commitSetUser(LoggedInUser);
     }
 
@@ -29,8 +28,6 @@ export default class UserService {
 
                 if (authenticationSuccessful && response.data !== '') {
                     const user = parsedRes as IUser;
-                    console.dir(`USER: ${user}`);
-                    // console.dir(user);
 
                     this.setAuthenticatedUserAsLoggedInUser(user);
                 }

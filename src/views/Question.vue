@@ -23,7 +23,6 @@
         }
 
         private mounted() {
-            console.log(`In Use Qs: ${this.questions}`);
         }
     }
 </script>

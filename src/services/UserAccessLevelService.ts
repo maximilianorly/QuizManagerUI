@@ -23,7 +23,6 @@ export default class UserAccessLevelService {
         }
         else {
             sessionState.commitSetErrorMessage('Could not set user access level');
-            console.log(sessionState.errorMessage);
         }
     }
 
@@ -33,12 +32,9 @@ export default class UserAccessLevelService {
         .then(response => {
             let userHasAccess: IUserHasAccess;
             if (response.status === 200) {
-                console.log('access level response:')
-                console.dir(response);
 
                 if (response.data !== '') {
                     userHasAccess = response.data as IUserHasAccess;
-                    console.dir(userHasAccess);
 
                     sessionState.commitSetUserHasAccess(userHasAccess);
                     if (userHasAccess.accessLevelId !== undefined) {

@@ -1,6 +1,6 @@
 import IUser from '../interfaces/IUser';
 import IUserHasAccess from '../interfaces/IUserHasAccess';
-import IQuestion from '../interfaces/IQuestion';
+import IQuestion, { IQuestionWithAnswers } from '../interfaces/IQuestion';
 import { IRootState } from '../store/index';
 import { getStoreBuilder, BareActionContext } from 'vuex-typex';
 
@@ -10,6 +10,7 @@ export interface ISessionState {
     AccessMessage: string,
     ErrorMessage: string,
     InUseQuestions: Array<IQuestion>,
+    InUseQuestionsWithAnswers: Array<IQuestionWithAnswers>
 }
 
 const initialSessionState: ISessionState = {
@@ -18,6 +19,7 @@ const initialSessionState: ISessionState = {
     AccessMessage: '',
     ErrorMessage: '',
     InUseQuestions: [],
+    InUseQuestionsWithAnswers: [],
 }
 
 const a = getStoreBuilder<IRootState>().module('sessionState', initialSessionState)
@@ -29,6 +31,7 @@ const userHasAccessGetter = a.read(state => state.UserHasAccess, 'UserHasAccess'
 const accessMessageGetter = a.read(state => state.AccessMessage, 'AccessMessage');
 const errorMessageGetter = a.read(state => state.ErrorMessage, 'ErrorMessage');
 const inUseQuestionsGetter = a.read(state => state.InUseQuestions, 'InUseQuestions');
+const inUseQuestionsWithAnswersGetter = a.read(state => state.InUseQuestionsWithAnswers, 'InUseQuestionsWithAnswers');
 
 // mutations
 function setSessionState(state: ISessionState, sessionState: ISessionState): void {
@@ -54,6 +57,11 @@ function setErrorMessage(state: ISessionState, errorMessage: string): void {
 function setInUseQuestions(state: ISessionState, inUseQuestions: Array<IQuestion>): void {
     state.InUseQuestions = inUseQuestions;
 }
+
+function setInUseQuestionsWithAnswers(state: ISessionState, inUseQuestionsWithAnswers: Array<IQuestionWithAnswers>): void {
+    state.InUseQuestionsWithAnswers = inUseQuestionsWithAnswers;
+}
+
 // action
 async function initialiseSession(context: BareActionContext<ISessionState, IRootState>) {
     sessionState.commitSetUser(initialSessionState.User);
@@ -61,6 +69,7 @@ async function initialiseSession(context: BareActionContext<ISessionState, IRoot
     sessionState.commitSetAccessMessage(initialSessionState.AccessMessage);
     sessionState.commitSetErrorMessage(initialSessionState.ErrorMessage);
     sessionState.commitSetInUseQuestions(initialSessionState.InUseQuestions);
+    sessionState.commitSetInUseQuestionsWithAnswers(initialSessionState.InUseQuestionsWithAnswers);
 }
 
 // state
@@ -91,6 +100,11 @@ const sessionState = {
     get inUseQuestions(): Array<IQuestion> {
         return inUseQuestionsGetter();
     },
+    
+    get inUseQuestionsWithAnswers(): Array<IQuestionWithAnswers> {
+        return inUseQuestionsWithAnswersGetter();
+    },
+
     // mutations
     commitSetSessionState: a.commit(setSessionState),
     commitSetUser: a.commit(setUser),
@@ -98,6 +112,7 @@ const sessionState = {
     commitSetAccessMessage: a.commit(setAccessMessage),
     commitSetErrorMessage: a.commit(setErrorMessage),
     commitSetInUseQuestions: a.commit(setInUseQuestions),
+    commitSetInUseQuestionsWithAnswers: a.commit(setInUseQuestionsWithAnswers),
 
 };
 

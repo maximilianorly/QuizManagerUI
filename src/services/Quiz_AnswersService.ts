@@ -1,6 +1,7 @@
 import axios from 'axios';
 import IUserCredentials from '../interfaces/IUserCredentials';
 import sessionState from '../store/SessionState';
+import { IQuestionWithAnswers } from '../interfaces/IQuestion';
 
 export default class AnswersService {
     private readonly portApi: string = "https://localhost:5001";
@@ -8,23 +9,20 @@ export default class AnswersService {
     private readonly headers = {headers: { "Access-Control-Allow-Origin": "*" }, "Content-Type": "application/json"};
 
     // Promise<void>
-    public async getAnswersForQuestionId(QuestionId: number): Promise<void> {
-        let authenticationSuccessful: boolean = false;
+    public async getAnswersForQuestionId(QuestionId: number): Promise<Array<IQuestionWithAnswers>> {
+        let _answersForActiveQuestions;
 
         await axios
-        .get(`${this.portApi}/api/${this.controllerName}/${QuestionId}`, this.headers)
+        .get(`${this.portApi}/api/${this.controllerName}/GetAllAnswerOptionsForQuestion/${QuestionId}`, this.headers)
         .then(response => {
             if (response.status === 200) {
-                const parsedRes = JSON.parse(JSON.stringify(response.data));
-                authenticationSuccessful = response.data as boolean;
-
                 if (response.data !== '') {
-                    
-                }
-                else {
-
+                    const _parsedRes = JSON.parse(JSON.stringify(response.data));
+                    _answersForActiveQuestions = _parsedRes;
                 }
             }
         });
+
+        return _answersForActiveQuestions;
     }
 }
