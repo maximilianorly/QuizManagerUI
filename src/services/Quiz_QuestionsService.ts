@@ -8,7 +8,6 @@ export default class QuestionsService {
     private readonly controllerName: string = "Questions";
     private readonly headers = {headers: { "Access-Control-Allow-Origin": "*" }, "Content-Type": "application/json"};
 
-    // Promise<void>
     public async getActiveQuestions(): Promise<Array<IQuestion>> {
         let _activeQuestions;
         

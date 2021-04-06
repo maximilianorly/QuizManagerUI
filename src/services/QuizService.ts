@@ -19,12 +19,10 @@ export default class QuizService {
             const _activeQuestions: Array<IQuestion> = response;
             await this.setQuestions(_activeQuestions);
 
-            console.log('questions set');
             _activeQuestions.forEach(async question => {
                 await this.getAnswersForQuestionId(question.id)
                 .then((response) => {
                     const _questionAnswers: Array<IQuestionAnswers> = response;
-                    // console.log(response)
                     this.setAnswersForQuestion(_questionAnswers);
                 })
             });
@@ -57,12 +55,10 @@ export default class QuizService {
         let _questionAnswers: Array<IQuestionAnswers> = sessionState.state.QuestionAnswers;
         Answers.forEach(answer => {
             _questionAnswers.push(answer);
-            // console.log(_questionAnswers)
             sessionState.commitSetQuestionAnswers(_questionAnswers);
         });
 
         this.mapAnswersToQuestion(sessionState.inUseQuestions, sessionState.questionAnswers);
-        // console.log(sessionState.state.QuestionAnswers)
     }
 
     private async mapAnswersToQuestion(Questions: Array<IQuestion>, Answers: Array<IQuestionAnswers>) {
@@ -73,14 +69,6 @@ export default class QuizService {
             let _questionWantsAnswers: IQuestionWithAnswers = question;
             _questionWantsAnswers.answerOptions = [];
 
-            // console.log(_questionWantsAnswers);
-            // Answers.forEach(answer => {
-            //     if (answer.questionId === question.id) {
-            //         _questionWantsAnswers.answerOptions = [];
-
-            //         _questionWantsAnswers.answerOptions.push(answer.option);
-            //     }
-            // });
             for (let answerIndex = 0; answerIndex < Answers.length; answerIndex++) {
                 const _answer = Answers[answerIndex];
                 if (_answer.questionId === question.id) {
@@ -91,7 +79,5 @@ export default class QuizService {
 
             _questionsHaveAnswers.push(_questionWantsAnswers);
         });
-
-        console.log(_questionsHaveAnswers);
     }
 }

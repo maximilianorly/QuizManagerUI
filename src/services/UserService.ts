@@ -15,7 +15,6 @@ export default class UserService {
         sessionState.commitSetUser(LoggedInUser);
     }
 
-    // Promise<void>
     public async verifyCredentials(Credentials: IUserCredentials): Promise<void> {
         let authenticationSuccessful: boolean = false;
 
@@ -34,7 +33,6 @@ export default class UserService {
                 else {
                     sessionState.commitSetErrorMessage('Could not retreive user.')
                 }
-                // authenticationSuccessful = response.data as boolean;
             }
         });
     }
