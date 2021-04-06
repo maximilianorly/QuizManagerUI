@@ -12,7 +12,7 @@ const routes: RouteConfig[] = [
     component: LogIn,
   },
   {
-    path: '/welcome',
+    path: '/Welcome',
     name: 'Welcome',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -20,12 +20,20 @@ const routes: RouteConfig[] = [
     component: () => import(/* webpackChunkName: "Welcome" */ '../views/Welcome.vue'),
   },
   {
-    path: '/error',
+    path: '/ErrorPage',
     name: 'ErrorPage',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "Welcome" */ '../views/Error.vue'),
+  },
+  {
+    path: '/Question',
+    name: 'Question',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "Welcome" */ '../views/Question.vue'),
   },
 ];
 

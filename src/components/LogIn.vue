@@ -57,16 +57,15 @@
         }
 
         private mounted() {
-            sessionState.commitSetSessionState(sessionState.state)
+            // routing to "/" resets entire session state.
+            sessionState.commitSetSessionState(sessionState.state);
         }
 
-        // Promise<boolean>
         private logInWithSuppliedCredentials(Credentials: IUserCredentials) {
             this.userService.verifyCredentials(Credentials)
             .then(() => {
                 if (sessionState.user.id) {
                     this.errorMessage = '';
-                    console.log("successss!");
                     this.getUserAccessLevel(this.user.id);
                 }
             });
@@ -75,14 +74,12 @@
         private getUserAccessLevel(UserId: number) {
             this.userAccessService.getUserAccessLevelByUserId(UserId)
             .then(() => {
-                console.log('ere')
-                console.dir(sessionState.state.UserHasAccess)
                 if (sessionState.state.UserHasAccess.accessLevelId) {
                     this.nextRoute();
                 }
                 else {
                     // this.setErrorMessage();
-                    this.$router.push('/errorPage')
+                    this.$router.push('/ErrorPage')
                 }
             });
         }
