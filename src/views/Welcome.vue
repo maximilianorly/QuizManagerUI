@@ -16,7 +16,7 @@
                         Start Quiz
                     </button>
                 </div>
-                <div v-if="userAccessLevel === 1" class="welcome__user-actions-button-container">
+                <div v-if="showEditQuizButton" class="welcome__user-actions-button-container">
                     <button class="welcome__button button button--medium">
                         Edit Quiz
                     </button>
@@ -30,6 +30,7 @@
     import { Vue, Component, Provide } from "vue-property-decorator";
     import sessionState from "../store/SessionState";
     import IUser from '../interfaces/IUser';
+    import UserAccessEnum from '../enums/UserAccessEnum';
 
     @Component({
         components: {
@@ -38,9 +39,8 @@
     })
     export default class Welcome extends Vue {
         private currentUser: string = this.user.firstName;
-
-        // create Enum for access levels.
-        private userAccessLevel = 1;
+        private userAccessLevel: number = this.accessLevel.accessLevelId;
+        private showEditQuizButton: boolean = false;
 
         private get user() {
             return sessionState.state.User;
@@ -50,7 +50,18 @@
             return sessionState.state.AccessMessage;
         }
 
+        private get accessLevel() {
+            return sessionState.state.UserHasAccess;
+        }
+
         private mounted() {
+            this.isEditQuizAvailable();
+        }
+
+        private isEditQuizAvailable() {
+            if (this.userAccessLevel === UserAccessEnum.Admin) {
+                this.showEditQuizButton = true;
+            }
         }
         
     }
