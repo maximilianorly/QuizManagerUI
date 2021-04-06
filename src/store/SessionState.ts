@@ -1,6 +1,7 @@
 import IUser from '../interfaces/IUser';
 import IUserHasAccess from '../interfaces/IUserHasAccess';
 import IQuestion, { IQuestionWithAnswers } from '../interfaces/IQuestion';
+import IQuestionAnswers from '../interfaces/IQuestionAnswers';
 import { IRootState } from '../store/index';
 import { getStoreBuilder, BareActionContext } from 'vuex-typex';
 
@@ -10,7 +11,8 @@ export interface ISessionState {
     AccessMessage: string,
     ErrorMessage: string,
     InUseQuestions: Array<IQuestion>,
-    InUseQuestionsWithAnswers: Array<IQuestionWithAnswers>
+    QuestionAnswers: Array<IQuestionAnswers>,
+    InUseQuestionsWithAnswers: Array<IQuestionWithAnswers>,
 }
 
 const initialSessionState: ISessionState = {
@@ -19,6 +21,7 @@ const initialSessionState: ISessionState = {
     AccessMessage: '',
     ErrorMessage: '',
     InUseQuestions: [],
+    QuestionAnswers: [],
     InUseQuestionsWithAnswers: [],
 }
 
@@ -31,11 +34,12 @@ const userHasAccessGetter = a.read(state => state.UserHasAccess, 'UserHasAccess'
 const accessMessageGetter = a.read(state => state.AccessMessage, 'AccessMessage');
 const errorMessageGetter = a.read(state => state.ErrorMessage, 'ErrorMessage');
 const inUseQuestionsGetter = a.read(state => state.InUseQuestions, 'InUseQuestions');
+const questionAnswersGetter = a.read(state => state.QuestionAnswers, 'QuestionAnswers');
 const inUseQuestionsWithAnswersGetter = a.read(state => state.InUseQuestionsWithAnswers, 'InUseQuestionsWithAnswers');
 
 // mutations
 function setSessionState(state: ISessionState, sessionState: ISessionState): void {
-    state = initialSessionState;
+    state = sessionState;
 }
 
 function setUser(state: ISessionState, user: IUser): void {
@@ -58,6 +62,10 @@ function setInUseQuestions(state: ISessionState, inUseQuestions: Array<IQuestion
     state.InUseQuestions = inUseQuestions;
 }
 
+function setQuestionAnswers(state: ISessionState, questionAnswers: Array<IQuestionAnswers>): void {
+    state.QuestionAnswers = questionAnswers;
+}
+
 function setInUseQuestionsWithAnswers(state: ISessionState, inUseQuestionsWithAnswers: Array<IQuestionWithAnswers>): void {
     state.InUseQuestionsWithAnswers = inUseQuestionsWithAnswers;
 }
@@ -69,6 +77,7 @@ async function initialiseSession(context: BareActionContext<ISessionState, IRoot
     sessionState.commitSetAccessMessage(initialSessionState.AccessMessage);
     sessionState.commitSetErrorMessage(initialSessionState.ErrorMessage);
     sessionState.commitSetInUseQuestions(initialSessionState.InUseQuestions);
+    sessionState.commitSetQuestionAnswers(initialSessionState.QuestionAnswers);
     sessionState.commitSetInUseQuestionsWithAnswers(initialSessionState.InUseQuestionsWithAnswers);
 }
 
@@ -100,6 +109,10 @@ const sessionState = {
     get inUseQuestions(): Array<IQuestion> {
         return inUseQuestionsGetter();
     },
+
+    get questionAnswers(): Array<IQuestionAnswers> {
+        return questionAnswersGetter();
+    },
     
     get inUseQuestionsWithAnswers(): Array<IQuestionWithAnswers> {
         return inUseQuestionsWithAnswersGetter();
@@ -112,6 +125,7 @@ const sessionState = {
     commitSetAccessMessage: a.commit(setAccessMessage),
     commitSetErrorMessage: a.commit(setErrorMessage),
     commitSetInUseQuestions: a.commit(setInUseQuestions),
+    commitSetQuestionAnswers: a.commit(setQuestionAnswers),
     commitSetInUseQuestionsWithAnswers: a.commit(setInUseQuestionsWithAnswers),
 
 };

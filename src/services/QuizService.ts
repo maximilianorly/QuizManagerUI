@@ -4,6 +4,7 @@ import sessionState from '../store/SessionState';
 import QuestionsService from './Quiz_QuestionsService';
 import AnswersService from './Quiz_AnswersService';
 import IQuestion, { IQuestionWithAnswers } from '../interfaces/IQuestion';
+import IQuestionAnswers from '../interfaces/IQuestionAnswers';
 
 export default class QuizService {
     private readonly portApi: string = "https://localhost:5001";
@@ -22,7 +23,7 @@ export default class QuizService {
             _activeQuestions.forEach(async question => {
                 await this.getAnswersForQuestionId(question.id)
                 .then((response) => {
-                    const _questionAnswers: Array<IQuestionWithAnswers> = response;
+                    const _questionAnswers: Array<IQuestionAnswers> = response;
                     // console.log(response)
                     this.setAnswersForQuestion(_questionAnswers);
                 })
@@ -43,23 +44,27 @@ export default class QuizService {
         });
     }
 
-    private async getAnswersForQuestionId(QuestionId: number): Promise<Array<IQuestionWithAnswers>> {
-        let _answersForQuestion: Array<IQuestionWithAnswers> = [];
+    private async getAnswersForQuestionId(QuestionId: number): Promise<Array<IQuestionAnswers>> {
+        let _answersForQuestion: Array<IQuestionAnswers> = [];
         await this.AnswersService.getAnswersForQuestionId(QuestionId)
         .then(async (response) => {
             _answersForQuestion = response;
-            // await this.setAnswersForQuestions(_answersForQuestion);
         })
         return _answersForQuestion;
     }
 
-    private setAnswersForQuestion(Answers: Array<IQuestionWithAnswers>) {
-        let _questionAnswers: Array<IQuestionWithAnswers> = [];
+    private setAnswersForQuestion(Answers: Array<IQuestionAnswers>) {
+        let _questionAnswers: Array<IQuestionAnswers> = sessionState.state.QuestionAnswers;
         Answers.forEach(answer => {
             _questionAnswers.push(answer);
             // console.log(_questionAnswers)
-            sessionState.commitSetInUseQuestionsWithAnswers(_questionAnswers);
-            console.log(sessionState.state.InUseQuestionsWithAnswers)
+            sessionState.commitSetQuestionAnswers(_questionAnswers);
         });
+        console.log(sessionState.state.QuestionAnswers)
+    }
+
+    private mapAnswersToQuestions(Questions: Array<IQuestion>, Answers: Array<IQuestionAnswers>) {
+        let _answersHaveQuestion: Array<IQuestionWithAnswers> = [];
+
     }
 }

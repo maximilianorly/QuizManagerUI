@@ -57,10 +57,10 @@
         }
 
         private mounted() {
-            sessionState.commitSetSessionState(sessionState.state)
+            // routing to "/" resets entire session state.
+            sessionState.commitSetSessionState(sessionState.state);
         }
 
-        // Promise<boolean>
         private logInWithSuppliedCredentials(Credentials: IUserCredentials) {
             this.userService.verifyCredentials(Credentials)
             .then(() => {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import IUserCredentials from '../interfaces/IUserCredentials';
 import sessionState from '../store/SessionState';
-import { IQuestionWithAnswers } from '../interfaces/IQuestion';
+import IQuestionAnswers from '../interfaces/IQuestionAnswers';
 
 export default class AnswersService {
     private readonly portApi: string = "https://localhost:5001";
@@ -9,7 +9,7 @@ export default class AnswersService {
     private readonly headers = {headers: { "Access-Control-Allow-Origin": "*" }, "Content-Type": "application/json"};
 
     // Promise<void>
-    public async getAnswersForQuestionId(QuestionId: number): Promise<Array<IQuestionWithAnswers>> {
+    public async getAnswersForQuestionId(QuestionId: number): Promise<Array<IQuestionAnswers>> {
         let _answersForActiveQuestions;
 
         await axios
