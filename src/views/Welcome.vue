@@ -12,7 +12,7 @@
 
             <section class="welcome__user-actions">
                 <div class="welcome__user-actions-button-container">
-                    <button class="welcome__button button button--medium">
+                    <button class="welcome__button button button--medium" @click="getQuizQuestions()">
                         Start Quiz
                     </button>
                 </div>
@@ -31,6 +31,7 @@
     import sessionState from "../store/SessionState";
     import IUser from '../interfaces/IUser';
     import UserAccessEnum from '../enums/UserAccessEnum';
+    import QuizService from '../services/QuizService';
 
     @Component({
         components: {
@@ -41,6 +42,7 @@
         private currentUser: string = this.user.firstName;
         private userAccessLevel: number = this.accessLevel.accessLevelId;
         private showEditQuizButton: boolean = false;
+        private quizService = new QuizService();
 
         private get user() {
             return sessionState.state.User;
@@ -62,6 +64,24 @@
             if (this.userAccessLevel === UserAccessEnum.Admin) {
                 this.showEditQuizButton = true;
             }
+        }
+
+        private getQuizQuestions() {
+            console.log(1);
+            this.quizService.getActiveQuestions()
+            .then(() => {
+
+                if (sessionState.state.InUseQuestions[0]) {
+                    this.nextRoute();
+                }
+                else {
+                    this.$router.push('/ErrorPage')
+                }
+            })
+        }
+
+        private nextRoute() {
+            this.$router.push('/Question');
         }
         
     }

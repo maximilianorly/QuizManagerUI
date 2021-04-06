@@ -82,7 +82,7 @@
                 }
                 else {
                     // this.setErrorMessage();
-                    this.$router.push('/errorPage')
+                    this.$router.push('/ErrorPage')
                 }
             });
         }
