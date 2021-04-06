@@ -33,11 +33,12 @@
 </template>
 
 <script lang="ts">
-    import { Vue, Component, Provide } from "vue-property-decorator";
-    import IUser from "../interfaces/IUser";
-    import IUserCredentials from "../interfaces/IUserCredentials";
-    import UserService from "../services/UserService";
-    import sessionState from "../store/SessionState";
+    import { Vue, Component, Provide } from 'vue-property-decorator';
+    import IUser from '../interfaces/IUser';
+    import IUserCredentials from '../interfaces/IUserCredentials';
+    import UserService from '../services/UserService';
+    import userAccessLevelService from '../services/UserAccessLevelService'
+    import sessionState from '../store/SessionState';
 
     @Component({
         components: {
@@ -48,32 +49,51 @@
         private currentUser: IUser = {};
         private userCredentials: IUserCredentials = { Username: "", Password: ""};
         private userService: UserService = new UserService();
+        private userAccessService: userAccessLevelService = new userAccessLevelService()
         private errorMessage: string = '';
 
         private get user() {
             return sessionState.state.User;
         }
 
+        private mounted() {
+            sessionState.commitSetSessionState(sessionState.state)
+        }
+
         // Promise<boolean>
         private logInWithSuppliedCredentials(Credentials: IUserCredentials) {
-            this.userService.verifyCredentials(Credentials).then((response) => {
-                if (response !== null) {
-                    if (!response) {
-                        this.errorMessage = "Incorrect User and Password combination!"
-                    }
-                    else {
-                        const _user = response.data;
-                        this.errorMessage = '';
-                        console.log("successss!");
-                        // this.nextRoute();
-                    }
+            this.userService.verifyCredentials(Credentials)
+            .then(() => {
+                if (sessionState.user.id) {
+                    this.errorMessage = '';
+                    console.log("successss!");
+                    this.getUserAccessLevel(this.user.id);
                 }
             });
         }
 
-        // private nextRoute() {
-        //     this.$router.push()
-        // }
+        private getUserAccessLevel(UserId: number) {
+            this.userAccessService.getUserAccessLevelByUserId(UserId)
+            .then(() => {
+                console.log('ere')
+                console.dir(sessionState.state.UserHasAccess)
+                if (sessionState.state.UserHasAccess.accessLevelId) {
+                    this.nextRoute();
+                }
+                else {
+                    // this.setErrorMessage();
+                    this.$router.push('/errorPage')
+                }
+            });
+        }
+
+        private setErrorMessage() {
+
+        }
+
+        private nextRoute() {
+            this.$router.push('/Welcome')
+        }
     };
 </script>
 
