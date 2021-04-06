@@ -7,5 +7,5 @@ export default interface IQuestion {
 }
 
 export interface IQuestionWithAnswers extends IQuestion {
-    answerOptions: Array<string>;
+    answerOptions?: Array<string>;
 }

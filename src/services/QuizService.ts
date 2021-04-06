@@ -60,11 +60,38 @@ export default class QuizService {
             // console.log(_questionAnswers)
             sessionState.commitSetQuestionAnswers(_questionAnswers);
         });
-        console.log(sessionState.state.QuestionAnswers)
+
+        this.mapAnswersToQuestion(sessionState.inUseQuestions, sessionState.questionAnswers);
+        // console.log(sessionState.state.QuestionAnswers)
     }
 
-    private mapAnswersToQuestions(Questions: Array<IQuestion>, Answers: Array<IQuestionAnswers>) {
-        let _answersHaveQuestion: Array<IQuestionWithAnswers> = [];
+    private async mapAnswersToQuestion(Questions: Array<IQuestion>, Answers: Array<IQuestionAnswers>) {
+        let _questionsHaveAnswers: Array<IQuestionWithAnswers> = [];
+        let _questionWantsAnswers: IQuestionWithAnswers = {};
 
+        await Questions.forEach(question => {
+            let _questionWantsAnswers: IQuestionWithAnswers = question;
+            _questionWantsAnswers.answerOptions = [];
+
+            // console.log(_questionWantsAnswers);
+            // Answers.forEach(answer => {
+            //     if (answer.questionId === question.id) {
+            //         _questionWantsAnswers.answerOptions = [];
+
+            //         _questionWantsAnswers.answerOptions.push(answer.option);
+            //     }
+            // });
+            for (let answerIndex = 0; answerIndex < Answers.length; answerIndex++) {
+                const _answer = Answers[answerIndex];
+                if (_answer.questionId === question.id) {
+
+                    _questionWantsAnswers.answerOptions.push(_answer.option);
+                }
+            }
+
+            _questionsHaveAnswers.push(_questionWantsAnswers);
+        });
+
+        console.log(_questionsHaveAnswers);
     }
 }
