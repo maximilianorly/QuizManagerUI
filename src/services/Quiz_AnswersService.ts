@@ -9,7 +9,7 @@ export default class AnswersService {
     private readonly headers = {headers: { "Access-Control-Allow-Origin": "*" }, "Content-Type": "application/json"};
 
     public async getAnswersForQuestionId(QuestionId: number): Promise<Array<IQuestionAnswers>> {
-        let _answersForActiveQuestions;
+        let _answersForActiveQuestions: Array<IQuestionAnswers> = [];
 
         await axios
         .get(`${this.portApi}/api/${this.controllerName}/GetAllAnswerOptionsForQuestion/${QuestionId}`, this.headers)

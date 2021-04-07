@@ -19,7 +19,7 @@
                 </div>
 
                 <div class="log-in__user-data-input-container">
-                    <input type="text" placeholder="Password" v-model="userCredentials.Password" class="log-in__user-data-input">
+                    <input type="password" placeholder="Password" v-model="userCredentials.Password" class="log-in__user-data-input">
                 </div>
 
                 <div class="log-in__button-container">
@@ -39,6 +39,7 @@
     import UserService from '../services/UserService';
     import userAccessLevelService from '../services/UserAccessLevelService'
     import sessionState from '../store/SessionState';
+    import QuizService from '../services/QuizService';
 
     @Component({
         components: {
@@ -49,6 +50,7 @@
         private currentUser: IUser = {};
         private userCredentials: IUserCredentials = { Username: "", Password: ""};
         private userService: UserService = new UserService();
+        private quizService: QuizService = new QuizService();
         private userAccessService: userAccessLevelService = new userAccessLevelService()
         private errorMessage: string = '';
 
@@ -66,22 +68,31 @@
             .then(() => {
                 if (sessionState.user.id) {
                     this.errorMessage = '';
-                    this.getUserAccessLevel(this.user.id);
+                    this.getUserAccessLevel(sessionState.user.id);
                 }
             });
         }
 
         private getUserAccessLevel(UserId: number) {
             this.userAccessService.getUserAccessLevelByUserId(UserId)
-            .then(() => {
+            .then(async () => {
                 if (sessionState.state.UserHasAccess.accessLevelId) {
-                    this.nextRoute();
+                    await this.getQuizQuestions().then(() => {
+
+                        this.nextRoute();
+                    })
                 }
                 else {
                     // this.setErrorMessage();
                     this.$router.push('/ErrorPage')
                 }
             });
+        }
+
+        private async getQuizQuestions() {
+            await this.quizService.getActiveQuestions()
+            .then((response) => {
+            })
         }
 
         private setErrorMessage() {

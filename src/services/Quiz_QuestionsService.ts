@@ -9,7 +9,7 @@ export default class QuestionsService {
     private readonly headers = {headers: { "Access-Control-Allow-Origin": "*" }, "Content-Type": "application/json"};
 
     public async getActiveQuestions(): Promise<Array<IQuestion>> {
-        let _activeQuestions;
+        let _activeQuestions: Array<IQuestion> = [];
         
         await axios
         .get(`${this.portApi}/api/${this.controllerName}/GetAllActiveQuestions`, this.headers)

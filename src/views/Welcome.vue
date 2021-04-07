@@ -12,7 +12,7 @@
 
             <section class="welcome__user-actions">
                 <div class="welcome__user-actions-button-container">
-                    <button class="welcome__button button button--medium" @click="getQuizQuestions()">
+                    <button class="welcome__button button button--medium" @click="nextRoute()">
                         Start Quiz
                     </button>
                 </div>
@@ -33,16 +33,14 @@
     import UserAccessEnum from '../enums/UserAccessEnum';
     import QuizService from '../services/QuizService';
 
-    @Component({
-        components: {
-
-        },
-    })
+    @Component({})
     export default class Welcome extends Vue {
         private currentUser: string = this.user.firstName;
         private userAccessLevel: number = this.accessLevel.accessLevelId;
         private showEditQuizButton: boolean = false;
         private quizService = new QuizService();
+        // private ready: boolean = false;
+        // private checkReady;
 
         private get user() {
             return sessionState.state.User;
@@ -60,27 +58,33 @@
             this.isEditQuizAvailable();
         }
 
+        private destroyed() {
+            // clearInterval(this.checkReady);
+        }
+
         private isEditQuizAvailable() {
             if (this.userAccessLevel === UserAccessEnum.Admin) {
                 this.showEditQuizButton = true;
             }
         }
 
-        private getQuizQuestions() {
-            this.quizService.getActiveQuestions()
-            .then(() => {
+        //calling on 'startQuizClick'
+        // private async getQuizQuestions() {
+        //     await this.quizService.getActiveQuestions()
+        //     .then((response) => {
+        //     })
 
-                if (sessionState.state.InUseQuestions[0]) {
-                    this.nextRoute();
-                }
-                else {
-                    this.$router.push('/ErrorPage')
-                }
-            })
-        }
+        //     if (sessionState.state.InUseQuestions[0]) {
+        //         console.log(sessionState.state.InUseQuestions[0]);
+        //         this.nextRoute();
+        //     }
+        //     else {
+        //         this.$router.push('/ErrorPage')
+        //     }
+        // }
 
         private nextRoute() {
-            this.$router.push('/Question');
+            this.$router.push('/Quiz');
         }
         
     }
