@@ -13,25 +13,24 @@ export default class QuizService {
     private QuestionsService = new QuestionsService();
     private AnswersService = new AnswersService();
 
-    public async getActiveQuestions(): Promise<void> {
+    public async getActiveQuestions(): Promise<Array<IQuestionWithAnswers>> {
         await this.QuestionsService.getActiveQuestions()
         .then(async (response) => {
             const _activeQuestions: Array<IQuestion> = response;
             await this.setQuestions(_activeQuestions);
 
             _activeQuestions.forEach(async question => {
-                await this.getAnswersForQuestionId(question.id)
-                .then((response) => {
-                    const _questionAnswers: Array<IQuestionAnswers> = response;
-                    this.setAnswersForQuestion(_questionAnswers);
-                })
+                if (question.id) {
+                    await this.getAnswersForQuestionId(question.id)
+                    .then((response) => {
+                        const _questionAnswers: Array<IQuestionAnswers> = response;
+                        this.setAnswersForQuestion(_questionAnswers);
+                    })
+                }
             });
         });
 
-        // sessionState.state.InUseQuestions.forEach(async question => {
-        //     await this.getAnswersForQuestionId(question.id);
-        // });
-
+        return sessionState.state.InUseQuestionsWithAnswers;
     }
 
     private setQuestions(ActiveQuestions: Array<IQuestion>) {
