@@ -5,6 +5,7 @@ import QuestionsService from './Quiz_QuestionsService';
 import AnswersService from './Quiz_AnswersService';
 import IQuestion, { IQuestionWithAnswers } from '../interfaces/IQuestion';
 import IQuestionAnswers from '../interfaces/IQuestionAnswers';
+import IAnswer from '../interfaces/IAnswer';
 
 export default class QuizService {
     private readonly portApi: string = "https://localhost:5001";
@@ -69,14 +70,20 @@ export default class QuizService {
             _questionWantsAnswers.answerOptions = [];
 
             for (let answerIndex = 0; answerIndex < Answers.length; answerIndex++) {
-                const _answer = Answers[answerIndex];
-                if (_answer.questionId === question.id) {
+                let _answer = Answers[answerIndex];
+                console.log('asdf')
+                console.dir(_answer);
+                if (_answer.option) {
+                    if (_answer.questionId === question.id) {
+                        const _condensedAnswer: IAnswer = { answerId: _answer.id, answerOption: _answer.option };
 
-                    _questionWantsAnswers.answerOptions.push(_answer.option);
+                        _questionWantsAnswers.answerOptions.push(_condensedAnswer);
+                    }
                 }
             }
 
             _questionsHaveAnswers.push(_questionWantsAnswers);
+            console.log(_questionsHaveAnswers);
         });
     }
 }

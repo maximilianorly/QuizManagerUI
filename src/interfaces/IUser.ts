@@ -9,5 +9,5 @@ export default interface IUser {
 }
 
 export interface IUserAccess extends IUser {
-    accessLevel: UserAccessEnum;
+    accessLevel?: UserAccessEnum;
 }

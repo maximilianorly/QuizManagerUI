@@ -14,6 +14,8 @@
     import sessionState from "../store/SessionState";
     import IQuestion, { IQuestionWithAnswers } from '../interfaces/IQuestion';
     import QuizQuestion from '../components/QuizQuestion.vue';
+import IUserAnswerChoice from '../interfaces/IUserAnswerChoice';
+import IUser from '../interfaces/IUser';
 
     @Component({
         components: {
@@ -25,6 +27,7 @@
         private questionWithAnswers: IQuestionWithAnswers = {};
         private progessButtonText: string = 'Next question';
         private quizIndex: number = 0;
+        public userAnswersForQuiz: IUserAnswerChoice[] = [];
 
         private get user() {
             return sessionState.state.User;
@@ -32,6 +35,10 @@
 
         private get inUseQuestions() {
             return sessionState.state.InUseQuestions;
+        }
+
+        private get CurrentUserChosenAnswer() {
+            return sessionState.state.CurrentUserChosenAnswer;
         }
 
         private mounted() {
@@ -45,15 +52,23 @@
         }
 
         private progress() {
-            if (this.quizIndex < (this.quizQuestions.length - 2)) {
-                this.quizIndex++;
+            const _answer: IUserAnswerChoice = { 
+                    questionId: sessionState.state.CurrentUserChosenAnswer.questionId,
+                    answerId: sessionState.state.CurrentUserChosenAnswer.answerId 
+                }
+            
+            this.userAnswersForQuiz.push(_answer);
+            this.quizIndex++;
+
+            if (this.quizIndex === (this.quizQuestions.length - 1)) {
+                this.progessButtonText = 'Finish quiz'
                 this.setQuestion();
-            } 
-            else if (this.quizIndex < (this.quizQuestions.length - 1)) {
-                this.quizIndex++;
-                this.progessButtonText = 'Finish Quiz'
             }
-            else {
+            else if (this.quizIndex < (this.quizQuestions.length)) {
+                this.setQuestion();
+            }
+            else if (this.quizIndex === this.quizQuestions.length) {
+                sessionState.commitSetUserAnswersForQuiz(this.userAnswersForQuiz);
                 this.nextRoute();
             }
         }

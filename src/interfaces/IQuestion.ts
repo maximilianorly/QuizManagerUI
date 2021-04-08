@@ -1,3 +1,5 @@
+import IAnswer from './IAnswer';
+
 export default interface IQuestion {
     id?: number;
     question?: string;
@@ -7,5 +9,5 @@ export default interface IQuestion {
 }
 
 export interface IQuestionWithAnswers extends IQuestion {
-    answerOptions?: Array<string>;
+    answerOptions?: Array<IAnswer>;
 }
