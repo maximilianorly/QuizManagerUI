@@ -1,8 +1,8 @@
 export default interface IQuestionAnswers {
-    answerId: number;
-    questionId: number;
-    isCorrectOption: number;
-    option: string;
-    created: string;
-    modified: string;
+    id?: number;
+    questionId?: number;
+    isCorrectOption?: number;
+    option?: string;
+    created?: string;
+    modified?: string;
 }

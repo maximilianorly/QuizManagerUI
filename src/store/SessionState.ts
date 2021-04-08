@@ -2,6 +2,7 @@ import IUser from '../interfaces/IUser';
 import IUserHasAccess from '../interfaces/IUserHasAccess';
 import IQuestion, { IQuestionWithAnswers } from '../interfaces/IQuestion';
 import IQuestionAnswers from '../interfaces/IQuestionAnswers';
+import IUserAnswerChoice from '../interfaces/IUserAnswerChoice';
 import { IRootState } from '../store/index';
 import { getStoreBuilder, BareActionContext } from 'vuex-typex';
 
@@ -13,6 +14,8 @@ export interface ISessionState {
     InUseQuestions: Array<IQuestion>,
     QuestionAnswers: Array<IQuestionAnswers>,
     InUseQuestionsWithAnswers: Array<IQuestionWithAnswers>,
+    CurrentUserChosenAnswer: IUserAnswerChoice,
+    UserAnswersForQuiz: Array<IUserAnswerChoice>,
 }
 
 const initialSessionState: ISessionState = {
@@ -23,6 +26,8 @@ const initialSessionState: ISessionState = {
     InUseQuestions: [],
     QuestionAnswers: [],
     InUseQuestionsWithAnswers: [],
+    CurrentUserChosenAnswer: { questionId: 0, answerId: 0 },
+    UserAnswersForQuiz: [],
 }
 
 const a = getStoreBuilder<IRootState>().module('sessionState', initialSessionState)
@@ -36,6 +41,8 @@ const errorMessageGetter = a.read(state => state.ErrorMessage, 'ErrorMessage');
 const inUseQuestionsGetter = a.read(state => state.InUseQuestions, 'InUseQuestions');
 const questionAnswersGetter = a.read(state => state.QuestionAnswers, 'QuestionAnswers');
 const inUseQuestionsWithAnswersGetter = a.read(state => state.InUseQuestionsWithAnswers, 'InUseQuestionsWithAnswers');
+const currentUserChosenAnswerGetter = a.read(state => state.CurrentUserChosenAnswer, 'CurrentUserChosenAnswer');
+const userAnswersForQuizGetter = a.read(state => state.UserAnswersForQuiz, 'UserAnswersForQuiz');
 
 // mutations
 function setSessionState(state: ISessionState, sessionState: ISessionState): void {
@@ -70,6 +77,14 @@ function setInUseQuestionsWithAnswers(state: ISessionState, inUseQuestionsWithAn
     state.InUseQuestionsWithAnswers = inUseQuestionsWithAnswers;
 }
 
+function setCurrentUserChosenAnswer(state: ISessionState, currentUserChosenAnswer: IUserAnswerChoice): void {
+    state.CurrentUserChosenAnswer = currentUserChosenAnswer;
+}
+
+function setUserAnswersForQuiz(state: ISessionState, userAnswersForQuiz: Array<IUserAnswerChoice>): void {
+    state.UserAnswersForQuiz = userAnswersForQuiz;
+}
+
 // action
 async function initialiseSession(context: BareActionContext<ISessionState, IRootState>) {
     sessionState.commitSetUser(initialSessionState.User);
@@ -79,6 +94,9 @@ async function initialiseSession(context: BareActionContext<ISessionState, IRoot
     sessionState.commitSetInUseQuestions(initialSessionState.InUseQuestions);
     sessionState.commitSetQuestionAnswers(initialSessionState.QuestionAnswers);
     sessionState.commitSetInUseQuestionsWithAnswers(initialSessionState.InUseQuestionsWithAnswers);
+    sessionState.commitSetCurrentUserChosenAnswer(initialSessionState.CurrentUserChosenAnswer);
+    sessionState.commitSetUserAnswersForQuiz(initialSessionState.UserAnswersForQuiz);
+    
 }
 
 // state
@@ -117,6 +135,14 @@ const sessionState = {
     get inUseQuestionsWithAnswers(): Array<IQuestionWithAnswers> {
         return inUseQuestionsWithAnswersGetter();
     },
+    
+    get currentUserChosenAnswer(): IUserAnswerChoice {
+        return currentUserChosenAnswerGetter();
+    },
+
+    get userAnswersForQuiz(): Array<IUserAnswerChoice> {
+        return userAnswersForQuizGetter();
+    },
 
     // mutations
     commitSetSessionState: a.commit(setSessionState),
@@ -127,6 +153,8 @@ const sessionState = {
     commitSetInUseQuestions: a.commit(setInUseQuestions),
     commitSetQuestionAnswers: a.commit(setQuestionAnswers),
     commitSetInUseQuestionsWithAnswers: a.commit(setInUseQuestionsWithAnswers),
+    commitSetCurrentUserChosenAnswer: a.commit(setCurrentUserChosenAnswer),
+    commitSetUserAnswersForQuiz: a.commit(setUserAnswersForQuiz),
 
 };
 
