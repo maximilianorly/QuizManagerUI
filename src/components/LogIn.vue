@@ -1,6 +1,6 @@
 <template>
     <div class="component__container">
-        <div class="log-in__content">
+        <div v-if="!createUser" class="log-in__content">
             <section class="log-in__headers">
                 <h1 class="log-in__title">
                     QUIZTIME
@@ -25,6 +25,12 @@
                 <div class="log-in__button-container">
                     <button class="log-in__button button button--small" @click="logInWithSuppliedCredentials(userCredentials)">
                         Log In
+                    </button>
+
+                    <u> or </u>
+
+                    <button @click="this.createNewUserClick" class="log-in__button button button--small">
+                        Create User
                     </button>
                 </div>
             </section>
@@ -53,6 +59,7 @@
         private quizService: QuizService = new QuizService();
         private userAccessService: userAccessLevelService = new userAccessLevelService()
         private errorMessage: string = '';
+        private createUser: boolean = false;
 
         private get user() {
             return sessionState.state.User;
@@ -70,6 +77,9 @@
                     this.errorMessage = '';
                     this.getUserAccessLevel(sessionState.user.id);
                 }
+                else {
+                    this.errorMessage = 'User with these credentials does not exist.'
+                }
             });
         }
 
@@ -84,7 +94,8 @@
                 }
                 else {
                     // this.setErrorMessage();
-                    this.$router.push('/ErrorPage')
+                    console.log('pushing to error page');
+                    this.$router.push('/ErrorPage');
                 }
             });
         }
@@ -101,6 +112,10 @@
 
         private nextRoute() {
             this.$router.push('/Welcome')
+        }
+
+        private createNewUserClick() {
+            this.createUser = !this.createUser;
         }
     };
 </script>

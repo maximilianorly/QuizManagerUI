@@ -35,8 +35,10 @@
 
     @Component({})
     export default class Welcome extends Vue {
-        private currentUser: string = this.user.firstName;
-        private userAccessLevel: number = this.accessLevel.accessLevelId;
+        private currentUser: string;
+        //  = this.user.firstName;
+        private userAccessLevel: number;
+        //  = this.accessLevel.accessLevelId;
         private showEditQuizButton: boolean = false;
         private quizService = new QuizService();
         // private ready: boolean = false;
@@ -59,7 +61,6 @@
         }
 
         private destroyed() {
-            // clearInterval(this.checkReady);
         }
 
         private isEditQuizAvailable() {

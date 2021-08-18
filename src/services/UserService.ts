@@ -12,6 +12,7 @@ export default class UserService {
         return sessionState.state.User;
     }
     private setAuthenticatedUserAsLoggedInUser(LoggedInUser: IUser) {
+        console.log(LoggedInUser);
         sessionState.commitSetUser(LoggedInUser);
     }
 
@@ -19,15 +20,19 @@ export default class UserService {
         let authenticationSuccessful: boolean = false;
 
         await axios
-        .post(`${this.portApi}/api/${this.controllerName}`, Credentials, this.headers)
+        .post(`${this.portApi}/api/${this.controllerName}/Login`, Credentials, this.headers)
         .then(response => {
+            console.dir(response)
             if (response.status === 200) {
                 const parsedRes = JSON.parse(JSON.stringify(response.data));
                 authenticationSuccessful = response.data as boolean;
 
+                console.log(authenticationSuccessful);
                 if (authenticationSuccessful && response.data !== '') {
+                    console.log('passed');
                     const user = parsedRes as IUser;
 
+                    console.log(user);
                     this.setAuthenticatedUserAsLoggedInUser(user);
                 }
                 else {
@@ -36,4 +41,26 @@ export default class UserService {
             }
         });
     }
+
+    // public async verifyCredentials(Credentials: IUserCredentials): Promise<void> {
+    //     let authenticationSuccessful: boolean = false;
+
+    //     await axios
+    //     .post(`${this.portApi}/api/${this.controllerName}/Login`, Credentials, this.headers)
+    //     .then(response => {
+    //         if (response.status === 200) {
+    //             const parsedRes = JSON.parse(JSON.stringify(response.data));
+    //             authenticationSuccessful = response.data as boolean;
+
+    //             if (authenticationSuccessful && response.data !== '') {
+    //                 const user = parsedRes as IUser;
+
+    //                 this.setAuthenticatedUserAsLoggedInUser(user);
+    //             }
+    //             else {
+    //                 sessionState.commitSetErrorMessage('Could not retreive user.')
+    //             }
+    //         }
+    //     });
+    // }
 }
