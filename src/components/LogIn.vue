@@ -73,10 +73,11 @@
             .then(async () => {
                 if (sessionState.state.UserHasAccess.userId) {
                     this.errorMessage = '';
-                    await this.getQuizQuestions().then(() => {
+                    this.nextRoute();
+                    // await this.getQuizQuestions().then(() => {
 
-                        this.nextRoute();
-                    })
+                    //     })
+                    //     this.nextRoute();
                 }
                 else {
                     this.errorMessage = 'User with these credentials does not exist.'

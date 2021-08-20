@@ -48,7 +48,7 @@
             sessionState.commitSetCurrentUserChosenAnswer(_chosenAnswer);
         }
 
-        public closeModal(event) {
+        public closeModal(event: any) {
             this.$emit('closeClicked');
         }
     }
