@@ -15,28 +15,27 @@ const routes: RouteConfig[] = [
   {
     path: '/Welcome',
     name: 'Welcome',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "Welcome" */ '../views/Welcome.vue'),
+    component: () => import('../views/Welcome.vue'),
+  },
+  {
+    path: '/Quizzes',
+    name: 'Quizzes',
+    component: () => import('../views/Quizzes.vue'),
   },
   {
     path: '/ErrorPage',
     name: 'ErrorPage',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "Error" */ '../views/Error.vue'),
+    component: () => import('../views/Error.vue'),
   },
   {
     path: '/Quiz',
     name: 'Quiz',
-    component: () => import(/* webpackChunkName: "Quiz" */ '../views/Quiz.vue'),
+    component: () => import('../views/Quiz.vue'),
   },
   {
     path: '/Finished',
     name: 'Finished',
-    component: () => import(/* webpackChunkName: "Finished" */ '../views/Finished.vue'),
+    component: () => import('../views/Finished.vue'),
   },
 ];
 

@@ -1,5 +1,6 @@
 import IUser from '../interfaces/IUser';
 import IUserHasAccess from '../interfaces/IUserHasAccess';
+import IQuiz, { IQuizWithQuestionsAndAnswers } from '../interfaces/IQuiz';
 import IQuestion, { IQuestionWithAnswers } from '../interfaces/IQuestion';
 import IQuestionAnswers from '../interfaces/IQuestionAnswers';
 import IUserAnswerChoice from '../interfaces/IUserAnswerChoice';
@@ -11,6 +12,8 @@ export interface ISessionState {
     UserHasAccess: IUserHasAccess,
     AccessMessage: string,
     ErrorMessage: string,
+    Quizzes: Array<IQuiz>,
+    SelectedQuiz: IQuizWithQuestionsAndAnswers,
     InUseQuestions: Array<IQuestion>,
     QuestionAnswers: Array<IQuestionAnswers>,
     InUseQuestionsWithAnswers: Array<IQuestionWithAnswers>,
@@ -23,6 +26,8 @@ const initialSessionState: ISessionState = {
     UserHasAccess: { id: 0, accessLevelId: 0, userId: 0 },
     AccessMessage: '',
     ErrorMessage: '',
+    Quizzes: [],
+    SelectedQuiz: { id: 0, isActive: false, name: '', questions: [], answers: [] },
     InUseQuestions: [],
     QuestionAnswers: [],
     InUseQuestionsWithAnswers: [],
@@ -38,6 +43,8 @@ const userGetter = a.read(state => state.User, 'User');
 const userHasAccessGetter = a.read(state => state.UserHasAccess, 'UserHasAccess');
 const accessMessageGetter = a.read(state => state.AccessMessage, 'AccessMessage');
 const errorMessageGetter = a.read(state => state.ErrorMessage, 'ErrorMessage');
+const quizzesGetter = a.read(state => state.Quizzes, 'Quizzes');
+const selectedQuizGetter = a.read(state => state.SelectedQuiz, 'SelectedQuiz');
 const inUseQuestionsGetter = a.read(state => state.InUseQuestions, 'InUseQuestions');
 const questionAnswersGetter = a.read(state => state.QuestionAnswers, 'QuestionAnswers');
 const inUseQuestionsWithAnswersGetter = a.read(state => state.InUseQuestionsWithAnswers, 'InUseQuestionsWithAnswers');
@@ -63,6 +70,14 @@ function setAccessMessage(state: ISessionState, accessMessage: string): void {
 
 function setErrorMessage(state: ISessionState, errorMessage: string): void {
     state.ErrorMessage = errorMessage;
+}
+
+function setQuizzes(state: ISessionState, quizzes: Array<IQuiz>): void {
+    state.Quizzes = quizzes;
+}
+
+function setSelectedQuiz(state: ISessionState, SelectedQuiz: IQuizWithQuestionsAndAnswers): void {
+    state.SelectedQuiz = SelectedQuiz;
 }
 
 function setInUseQuestions(state: ISessionState, inUseQuestions: Array<IQuestion>): void {
@@ -91,6 +106,8 @@ async function initialiseSession(context: BareActionContext<ISessionState, IRoot
     sessionState.commitSetUserHasAccess(initialSessionState.UserHasAccess);
     sessionState.commitSetAccessMessage(initialSessionState.AccessMessage);
     sessionState.commitSetErrorMessage(initialSessionState.ErrorMessage);
+    sessionState.commitSetQuizzes(initialSessionState.Quizzes);
+    sessionState.commitSetSelectedQuiz(initialSessionState.SelectedQuiz);
     sessionState.commitSetInUseQuestions(initialSessionState.InUseQuestions);
     sessionState.commitSetQuestionAnswers(initialSessionState.QuestionAnswers);
     sessionState.commitSetInUseQuestionsWithAnswers(initialSessionState.InUseQuestionsWithAnswers);
@@ -124,6 +141,14 @@ const sessionState = {
         return errorMessageGetter();
     },
 
+    get quizzes(): Array<IQuiz> {
+        return quizzesGetter();
+    },
+
+    get selectedQuiz(): IQuizWithQuestionsAndAnswers{
+        return selectedQuizGetter();
+    },
+
     get inUseQuestions(): Array<IQuestion> {
         return inUseQuestionsGetter();
     },
@@ -150,6 +175,8 @@ const sessionState = {
     commitSetUserHasAccess: a.commit(setUserHasAccess),
     commitSetAccessMessage: a.commit(setAccessMessage),
     commitSetErrorMessage: a.commit(setErrorMessage),
+    commitSetQuizzes: a.commit(setQuizzes),
+    commitSetSelectedQuiz: a.commit(setSelectedQuiz),
     commitSetInUseQuestions: a.commit(setInUseQuestions),
     commitSetQuestionAnswers: a.commit(setQuestionAnswers),
     commitSetInUseQuestionsWithAnswers: a.commit(setInUseQuestionsWithAnswers),

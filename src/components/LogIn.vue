@@ -27,11 +27,11 @@
                         Log In
                     </button>
 
-                    <u> or </u>
+                    <!-- <u> or </u>
 
                     <button @click="this.createNewUserClick" class="log-in__button button button--small">
                         Create User
-                    </button>
+                    </button> -->
                 </div>
             </section>
         </div>
@@ -43,7 +43,6 @@
     import IUser from '../interfaces/IUser';
     import IUserCredentials from '../interfaces/IUserCredentials';
     import UserService from '../services/UserService';
-    import userAccessLevelService from '../services/UserAccessLevelService'
     import sessionState from '../store/SessionState';
     import QuizService from '../services/QuizService';
 
@@ -57,7 +56,6 @@
         private userCredentials: IUserCredentials = { Username: "", Password: ""};
         private userService: UserService = new UserService();
         private quizService: QuizService = new QuizService();
-        private userAccessService: userAccessLevelService = new userAccessLevelService()
         private errorMessage: string = '';
         private createUser: boolean = false;
 
@@ -71,11 +69,14 @@
         }
 
         private logInWithSuppliedCredentials(Credentials: IUserCredentials) {
-            this.userService.verifyCredentials(Credentials)
-            .then(() => {
-                if (sessionState.user.id) {
+            this.userService.changeLogInState(Credentials)
+            .then(async () => {
+                if (sessionState.state.UserHasAccess.userId) {
                     this.errorMessage = '';
-                    this.getUserAccessLevel(sessionState.user.id);
+                    await this.getQuizQuestions().then(() => {
+
+                        this.nextRoute();
+                    })
                 }
                 else {
                     this.errorMessage = 'User with these credentials does not exist.'
@@ -83,22 +84,22 @@
             });
         }
 
-        private getUserAccessLevel(UserId: number) {
-            this.userAccessService.getUserAccessLevelByUserId(UserId)
-            .then(async () => {
-                if (sessionState.state.UserHasAccess.accessLevelId) {
-                    await this.getQuizQuestions().then(() => {
+        // private getUserAccessLevel(UserId: number) {
+        //     this.userAccessService.getUserAccessLevelByUserId(UserId)
+        //     .then(async () => {
+        //         if (sessionState.state.UserHasAccess.accessLevelId) {
+        //             await this.getQuizQuestions().then(() => {
 
-                        this.nextRoute();
-                    })
-                }
-                else {
-                    // this.setErrorMessage();
-                    console.log('pushing to error page');
-                    this.$router.push('/ErrorPage');
-                }
-            });
-        }
+        //                 this.nextRoute();
+        //             })
+        //         }
+        //         else {
+        //             // this.setErrorMessage();
+        //             console.log('pushing to error page');
+        //             this.$router.push('/ErrorPage');
+        //         }
+        //     });
+        // }
 
         private async getQuizQuestions() {
             await this.quizService.getActiveQuestions()

@@ -1,19 +1,56 @@
 import axios from 'axios';
-import IUser from '../interfaces/IUser';
+import IUser, { IUserAccess } from '../interfaces/IUser';
 import IUserCredentials from '../interfaces/IUserCredentials';
 import sessionState from '../store/SessionState';
+import IUserHasAccess from '@/interfaces/IUserHasAccess';
+import UserAccessEnum from '../enums/UserAccessEnum';
 
 export default class UserService {
     private readonly portApi: string = "https://localhost:5001";
     private readonly controllerName: string = "User";
-    private readonly headers = {headers: { "Access-Control-Allow-Origin": "*" }, "Content-Type": "application/json"};
+    private readonly headers = {headers: { "Access-Control-Allow-Origin": "POST, PUT, GET, OPTIONS" }, "Content-Type": "application/json"};
 
     private get user() {
         return sessionState.state.User;
     }
     private setAuthenticatedUserAsLoggedInUser(LoggedInUser: IUser) {
-        console.log(LoggedInUser);
         sessionState.commitSetUser(LoggedInUser);
+    }
+
+    private async getUserByUserId(UserId: number) {
+        await axios
+        .get(`${this.portApi}/api/${this.controllerName}/${UserId}`, this.headers)
+        .then(response => {
+            if (response.status === 200) {
+                const parsedRes = JSON.parse(JSON.stringify(response.data));
+
+                if (parsedRes !== '') {
+                    const user = { id: parsedRes.id, firstName: parsedRes.firstName, lastName: parsedRes.lastName, username: parsedRes.userName} as IUser;
+                    sessionState.commitSetUser(user);
+                }
+                else {
+                    sessionState.commitSetErrorMessage('Could not logout user.')
+                }
+            }
+        });
+    }
+
+    private setUserAccess(userAccess: IUserHasAccess) {
+        sessionState.commitSetUserHasAccess(userAccess);
+
+        if (userAccess.accessLevelId === UserAccessEnum.Admin) {
+            sessionState.commitSetAccessMessage('As Admin, you have access to all quiz content and edit rights.');
+        }
+        else if (userAccess.accessLevelId === UserAccessEnum.UserWithAnswerAccess) {
+            sessionState.commitSetAccessMessage('With your privilidged access,you can view all quiz content.');
+        }
+        else if (userAccess.accessLevelId === UserAccessEnum.Restricted) {
+            sessionState.commitSetAccessMessage('With restricted access you can only view questions in each quiz.');
+        }
+        else {
+            sessionState.commitSetErrorMessage('Could not set user access level');
+        }
+        console.log(sessionState.state.UserHasAccess);
     }
 
     public async verifyCredentials(Credentials: IUserCredentials): Promise<void> {
@@ -22,21 +59,53 @@ export default class UserService {
         await axios
         .post(`${this.portApi}/api/${this.controllerName}/Login`, Credentials, this.headers)
         .then(response => {
-            console.dir(response)
             if (response.status === 200) {
                 const parsedRes = JSON.parse(JSON.stringify(response.data));
                 authenticationSuccessful = response.data as boolean;
+                console.log('verifying')
 
-                console.log(authenticationSuccessful);
                 if (authenticationSuccessful && response.data !== '') {
                     console.log('passed');
-                    const user = parsedRes as IUser;
+                    const userAccess = parsedRes as IUserHasAccess;
 
-                    console.log(user);
-                    this.setAuthenticatedUserAsLoggedInUser(user);
+                    // this.setAuthenticatedUserAsLoggedInUser(userAccess);
+                    if (userAccess && userAccess.userId) {
+                        this.setUserAccess(userAccess);
+                        this.getUserByUserId(userAccess.userId);
+                    }
+                    // console.log(sessionState.state.user)
                 }
                 else {
                     sessionState.commitSetErrorMessage('Could not retreive user.')
+                }
+            }
+        });
+    }
+
+    public async changeLogInState(Credentials?: IUserCredentials) {
+        if (Credentials) {
+            await this.verifyCredentials(Credentials);
+        }
+        else if (sessionState.state.UserHasAccess.userId){
+            await this.logoutUser(sessionState.state.UserHasAccess.userId);
+        }
+        else {
+            sessionState.commitSetErrorMessage("Something went wrong. If logging in then credentials must be supplied.");
+        }
+    }
+
+    public async logoutUser(UserId: Number) {
+        await axios
+        .put(`${this.portApi}/api/${this.controllerName}/Logout/${UserId}`, this.headers)
+        .then(response => {
+            if (response.status === 200) {
+                const parsedRes = JSON.parse(JSON.stringify(response.data));
+
+                if (parsedRes !== '') {
+                    console.log('logged out successfully');
+                }
+                else {
+                    sessionState.commitSetErrorMessage('Could not logout user.')
                 }
             }
         });

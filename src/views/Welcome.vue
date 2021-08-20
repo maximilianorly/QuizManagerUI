@@ -3,7 +3,7 @@
         <div class="welcome__content">
             <section class="welcome__headers">
                 <h1 class="welcome__title">
-                    WELCOME {{ this.currentUser.toUpperCase() }}
+                    Welcome {{ this.currentUser.firstName }}
                 </h1>
                 <h6 class="welcome__direction">
                     {{ this.accessMessage }}
@@ -12,8 +12,8 @@
 
             <section class="welcome__user-actions">
                 <div class="welcome__user-actions-button-container">
-                    <button class="welcome__button button button--medium" @click="nextRoute()">
-                        Start Quiz
+                    <button class="welcome__button button button--medium" @click="getQuizzes()">
+                        Continue
                     </button>
                 </div>
                 <div v-if="showEditQuizButton" class="welcome__user-actions-button-container">
@@ -32,15 +32,16 @@
     import IUser from '../interfaces/IUser';
     import UserAccessEnum from '../enums/UserAccessEnum';
     import QuizService from '../services/QuizService';
+    import UserService from '../services/UserService';
 
     @Component({})
     export default class Welcome extends Vue {
-        private currentUser: string;
-        //  = this.user.firstName;
-        private userAccessLevel: number;
+        private currentUser: IUser = {};
+        private userAccessLevel: number = 0;
         //  = this.accessLevel.accessLevelId;
         private showEditQuizButton: boolean = false;
         private quizService = new QuizService();
+        private userService: UserService = new UserService();
         // private ready: boolean = false;
         // private checkReady;
 
@@ -57,7 +58,9 @@
         }
 
         private mounted() {
-            this.isEditQuizAvailable();
+            console.log('mounted in welcome')
+            this.currentUser = this.user;
+            // this.isEditQuizAvailable();
         }
 
         private destroyed() {
@@ -67,6 +70,18 @@
             if (this.userAccessLevel === UserAccessEnum.Admin) {
                 this.showEditQuizButton = true;
             }
+        }
+
+        public async LogoutClicked() {
+            await this.userService.changeLogInState()
+            .then(() => {
+                if (!sessionState.state.ErrorMessage) {
+                    this.$router.push('/');
+                }
+                else {
+                    this.$router.push('/ErrorPage');
+                }
+            });
         }
 
         //calling on 'startQuizClick'
@@ -84,8 +99,18 @@
         //     }
         // }
 
+        private async getQuizzes() {
+            await this.quizService.getQuizzes()
+            .then(() => {
+                if (!sessionState.state.ErrorMessage) {
+                    this.nextRoute();
+                }
+                else this.$router.push('/ErrorPage');
+            });
+        }
+
         private nextRoute() {
-            this.$router.push('/Quiz');
+            this.$router.push('/Quizzes');
         }
         
     }

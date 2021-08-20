@@ -1,13 +1,22 @@
 <template>
-    <div class="component__container">
-        <div class="quiz-question__question">
-            {{ this.$props.quizQuestion.question }}
+    <div class="quiz-question__modal">  
+        <div class="quiz-question__modal-header">
+            <button @click="closeModal">
+                Close
+            </button>
         </div>
 
-        <div class="quiz-question__answer" v-for="answer in this.$props.quizQuestion.answerOptions" :key="answer.answerId">
-            <button class="quiz-question__answer-button" @click="setAnswer(answer)">
-                {{ answer.answerOption }}
-            </button>
+        <div class="quiz-question__modal--top">
+            <div class="quiz-question__question">
+                {{quizQuestion.question}}
+            </div>
+        </div>
+        <div class="quiz-question__modal--bottom">
+            <div class="quiz-question__answers">
+                <div class="quiz-question__answer" v-for="answer in QuizQuestionWithAnswers.answerOptions" :key="answer.id">
+                    {{ answer.option }}
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -16,12 +25,18 @@
     import { Vue, Component, Provide } from 'vue-property-decorator';
     import IUserAnswerChoice from '../interfaces/IUserAnswerChoice';
     import IAnswer from '../interfaces/IAnswer';
-import sessionState from '../store/SessionState';
+    import sessionState from '../store/SessionState';
+    import { IQuestionWithAnswers } from '../interfaces/IQuestion';
 
      @Component({
          props: ["quizQuestion"]
     })
     export default class QuizQuestion extends Vue {
+        private QuizQuestionWithAnswers: IQuestionWithAnswers = {};
+
+        private mounted() {
+            this.QuizQuestionWithAnswers = this.$props.quizQuestion;
+        }
 
         private setAnswer(Answer: IAnswer): void {
             let _chosenAnswer: IUserAnswerChoice = {
@@ -31,6 +46,10 @@ import sessionState from '../store/SessionState';
 
 
             sessionState.commitSetCurrentUserChosenAnswer(_chosenAnswer);
+        }
+
+        public closeModal(event) {
+            this.$emit('closeClicked');
         }
     }
 </script>
