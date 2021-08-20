@@ -68,39 +68,19 @@
             sessionState.commitSetSessionState(sessionState.state);
         }
 
-        private logInWithSuppliedCredentials(Credentials: IUserCredentials) {
-            this.userService.changeLogInState(Credentials)
-            .then(async () => {
+        private async logInWithSuppliedCredentials(Credentials: IUserCredentials) {
+            console.log(sessionState.state.User);
+            await this.userService.changeLogInState(Credentials)
+            .then(() => {
                 if (sessionState.state.UserHasAccess.userId) {
                     this.errorMessage = '';
                     this.nextRoute();
-                    // await this.getQuizQuestions().then(() => {
-
-                    //     })
-                    //     this.nextRoute();
                 }
                 else {
                     this.errorMessage = 'User with these credentials does not exist.'
                 }
             });
         }
-
-        // private getUserAccessLevel(UserId: number) {
-        //     this.userAccessService.getUserAccessLevelByUserId(UserId)
-        //     .then(async () => {
-        //         if (sessionState.state.UserHasAccess.accessLevelId) {
-        //             await this.getQuizQuestions().then(() => {
-
-        //                 this.nextRoute();
-        //             })
-        //         }
-        //         else {
-        //             // this.setErrorMessage();
-        //             console.log('pushing to error page');
-        //             this.$router.push('/ErrorPage');
-        //         }
-        //     });
-        // }
 
         private async getQuizQuestions() {
             await this.quizService.getActiveQuestions()

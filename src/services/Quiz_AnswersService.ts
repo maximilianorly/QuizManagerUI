@@ -1,5 +1,4 @@
 import axios from 'axios';
-import IUserCredentials from '../interfaces/IUserCredentials';
 import sessionState from '../store/SessionState';
 import IQuestionAnswers from '../interfaces/IQuestionAnswers';
 

@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from 'axios';
-import IUserCredentials from '../interfaces/IUserCredentials';
 import sessionState from '../store/SessionState';
 import QuestionsService from './Quiz_QuestionsService';
 import AnswersService from './Quiz_AnswersService';

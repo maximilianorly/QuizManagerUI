@@ -58,7 +58,7 @@ export default class UserService {
 
         await axios
         .post(`${this.portApi}/api/${this.controllerName}/Login`, Credentials, this.headers)
-        .then(response => {
+        .then(async response => {
             if (response.status === 200) {
                 const parsedRes = JSON.parse(JSON.stringify(response.data));
                 authenticationSuccessful = response.data as boolean;
@@ -68,12 +68,10 @@ export default class UserService {
                     console.log('passed');
                     const userAccess = parsedRes as IUserHasAccess;
 
-                    // this.setAuthenticatedUserAsLoggedInUser(userAccess);
                     if (userAccess && userAccess.userId) {
                         this.setUserAccess(userAccess);
-                        this.getUserByUserId(userAccess.userId);
+                        await this.getUserByUserId(userAccess.userId);
                     }
-                    // console.log(sessionState.state.user)
                 }
                 else {
                     sessionState.commitSetErrorMessage('Could not retreive user.')
@@ -110,26 +108,4 @@ export default class UserService {
             }
         });
     }
-
-    // public async verifyCredentials(Credentials: IUserCredentials): Promise<void> {
-    //     let authenticationSuccessful: boolean = false;
-
-    //     await axios
-    //     .post(`${this.portApi}/api/${this.controllerName}/Login`, Credentials, this.headers)
-    //     .then(response => {
-    //         if (response.status === 200) {
-    //             const parsedRes = JSON.parse(JSON.stringify(response.data));
-    //             authenticationSuccessful = response.data as boolean;
-
-    //             if (authenticationSuccessful && response.data !== '') {
-    //                 const user = parsedRes as IUser;
-
-    //                 this.setAuthenticatedUserAsLoggedInUser(user);
-    //             }
-    //             else {
-    //                 sessionState.commitSetErrorMessage('Could not retreive user.')
-    //             }
-    //         }
-    //     });
-    // }
 }

@@ -38,12 +38,9 @@
     export default class Welcome extends Vue {
         private currentUser: IUser = {};
         private userAccessLevel: number = 0;
-        //  = this.accessLevel.accessLevelId;
         private showEditQuizButton: boolean = false;
         private quizService = new QuizService();
         private userService: UserService = new UserService();
-        // private ready: boolean = false;
-        // private checkReady;
 
         private get user() {
             return sessionState.state.User;
@@ -83,21 +80,6 @@
                 }
             });
         }
-
-        //calling on 'startQuizClick'
-        // private async getQuizQuestions() {
-        //     await this.quizService.getActiveQuestions()
-        //     .then((response) => {
-        //     })
-
-        //     if (sessionState.state.InUseQuestions[0]) {
-        //         console.log(sessionState.state.InUseQuestions[0]);
-        //         this.nextRoute();
-        //     }
-        //     else {
-        //         this.$router.push('/ErrorPage')
-        //     }
-        // }
 
         private async getQuizzes() {
             await this.quizService.getQuizzes()
