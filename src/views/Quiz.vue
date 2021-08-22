@@ -1,24 +1,35 @@
 <template>
-    <div class="component__container">
+    <div class="quiz__container">
         <header class="header__container">
-            <Header />
+            <Header :headerDetail="pageDescription" />
         </header>
         <div class="quiz__content">
-            <div v-if="quiz" class="quiz__questions">
-                {{quiz.name}}
-                <button class="button question__button" v-for="(question, index) in quiz.questions" :key="question.id" @click="showQuestionModal(question)">
-                    Question {{ index + 1 }}
-                </button>
-            </div>
-            <div class="quiz__finish">
-                <button class="button button--medium" @click="returnToQuizzes">
-                    Finish
-                </button>
-            </div>
+            <div class="card  quiz__card">
+                <div class="card__content quiz__card-content">
+                    <div class="quiz__questions-container">
+                        <div v-if="quiz" class="quiz__questions">
+                            <button class="button button--large quiz__question-button" v-for="(question, index) in quiz.questions" :key="question.id" @click="showQuestionModal(question)">
+                                <div v-if="editingQuiz">
+                                    Edit Question {{ index + 1 }}
+                                </div>
+                                <div v-else>
+                                    Question {{ index + 1 }}
+                                </div>
 
-            <div v-if="questionModal">
-                <QuizQuestion :quizQuestion="selectedQuestionData" @closeClicked="closeModalQuestionModal($event)"/>
+                                <img src="../assets/img/svg/down-chevron.svg" alt="down chevron">
+                            </button>
+                        </div>
+                    </div>
+                    <div class="quiz__finish">
+                        <button class="button button--medium quiz__finish-button" @click="returnToQuizzes">
+                            Finish
+                        </button>
+                    </div>
+                </div>
             </div>
+        </div>
+        <div class="quiz-question__modal-container" v-if="questionModal">
+            <QuizQuestion :quizQuestion="selectedQuestionData" @closeClicked="closeModalQuestionModal($event)"/>
         </div>
     </div>
 </template>
@@ -43,10 +54,11 @@
     })
     export default class Quiz extends Vue {
         private quizService = new QuizService();
-        private quiz: IQuizWithQuestions = {};
-        public questionsWithAnswers: Array<IQuestionWithAnswers> = [];
+        private quiz: IQuizWithQuestions = { id: 0, isActive: false, name: '' };
+        // public questionsWithAnswers: Array<IQuestionWithAnswers> = [];
         public selectedQuestionData: IQuestionWithAnswers = {};
         public questionModal: boolean = false;
+        public pageDescription: string = this.selectedQuiz.name;
 
         private get user() {
             return sessionState.state.User;
@@ -72,12 +84,20 @@
             return sessionState.state.CurrentUserChosenAnswer;
         }
 
+        private get editingQuiz() {
+            return sessionState.state.EditingQuiz;
+        }
+
         private mounted() {
             console.log('quiz mounted')
             this.quiz = this.selectedQuiz;
-            console.log('set quiz')
-            
-            this.questionsWithAnswers = this.InUseQuestionsWithAnswers;
+            console.log('set quiz');
+            // this.questionsWithAnswers = this.InUseQuestionsWithAnswers;
+            console.log(this.editingQuiz);
+        }
+
+        private destroyed() {
+            sessionState.commitSetEditingQuiz(false);
         }
 
         private async showQuestionModal(Question: IQuestionWithAnswers) {

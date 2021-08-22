@@ -19,6 +19,7 @@ export interface ISessionState {
     InUseQuestionsWithAnswers: Array<IQuestionWithAnswers>,
     CurrentUserChosenAnswer: IUserAnswerChoice,
     UserAnswersForQuiz: Array<IUserAnswerChoice>,
+    EditingQuiz: boolean;
 }
 
 const initialSessionState: ISessionState = {
@@ -33,6 +34,7 @@ const initialSessionState: ISessionState = {
     InUseQuestionsWithAnswers: [],
     CurrentUserChosenAnswer: { questionId: 0, answerId: 0 },
     UserAnswersForQuiz: [],
+    EditingQuiz: false,
 }
 
 const a = getStoreBuilder<IRootState>().module('sessionState', initialSessionState)
@@ -50,6 +52,7 @@ const questionAnswersGetter = a.read(state => state.QuestionAnswers, 'QuestionAn
 const inUseQuestionsWithAnswersGetter = a.read(state => state.InUseQuestionsWithAnswers, 'InUseQuestionsWithAnswers');
 const currentUserChosenAnswerGetter = a.read(state => state.CurrentUserChosenAnswer, 'CurrentUserChosenAnswer');
 const userAnswersForQuizGetter = a.read(state => state.UserAnswersForQuiz, 'UserAnswersForQuiz');
+const editingQuizGetter = a.read(state => state.EditingQuiz, 'EditingQuiz');
 
 // mutations
 function setSessionState(state: ISessionState, sessionState: ISessionState): void {
@@ -93,11 +96,16 @@ function setInUseQuestionsWithAnswers(state: ISessionState, inUseQuestionsWithAn
 }
 
 function setCurrentUserChosenAnswer(state: ISessionState, currentUserChosenAnswer: IUserAnswerChoice): void {
-    state.CurrentUserChosenAnswer = currentUserChosenAnswer;
+    state.CurrentUserChosenAnswer.questionId = currentUserChosenAnswer.questionId;
+    state.CurrentUserChosenAnswer.answerId = currentUserChosenAnswer.answerId;
 }
 
 function setUserAnswersForQuiz(state: ISessionState, userAnswersForQuiz: Array<IUserAnswerChoice>): void {
     state.UserAnswersForQuiz = userAnswersForQuiz;
+}
+
+function setEditingQuiz(state: ISessionState, editingQuiz: boolean): void {
+    state.EditingQuiz = editingQuiz;
 }
 
 // action
@@ -113,6 +121,7 @@ async function initialiseSession(context: BareActionContext<ISessionState, IRoot
     sessionState.commitSetInUseQuestionsWithAnswers(initialSessionState.InUseQuestionsWithAnswers);
     sessionState.commitSetCurrentUserChosenAnswer(initialSessionState.CurrentUserChosenAnswer);
     sessionState.commitSetUserAnswersForQuiz(initialSessionState.UserAnswersForQuiz);
+    sessionState.commitSetEditingQuiz(initialSessionState.EditingQuiz);
     
 }
 
@@ -169,6 +178,10 @@ const sessionState = {
         return userAnswersForQuizGetter();
     },
 
+    get editingQuiz(): boolean {
+        return editingQuizGetter();
+    },
+
     // mutations
     commitSetSessionState: a.commit(setSessionState),
     commitSetUser: a.commit(setUser),
@@ -182,6 +195,7 @@ const sessionState = {
     commitSetInUseQuestionsWithAnswers: a.commit(setInUseQuestionsWithAnswers),
     commitSetCurrentUserChosenAnswer: a.commit(setCurrentUserChosenAnswer),
     commitSetUserAnswersForQuiz: a.commit(setUserAnswersForQuiz),
+    commitSetEditingQuiz: a.commit(setEditingQuiz),
 
 };
 

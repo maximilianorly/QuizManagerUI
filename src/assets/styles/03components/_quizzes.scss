@@ -1,0 +1,61 @@
+.quizzes {
+    &__container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    &__content {
+        width: 82%;
+        height: 70%;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10.6875rem;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+    
+    &__quiz-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__quiz {
+        width: 100%;
+        height: 60%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__quiz-name {
+        color: $soft-grey;
+    }
+
+    &__button-group {
+        height: 55%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    &__quiz-button {
+        background-color: $confirm-green;
+
+        &--edit {
+            background-color: $company-blue;
+            color: $white;
+            border-color: $confirm-green;
+        }
+
+        &:hover {
+            box-shadow: 0 0 2rem -0.1875rem #6FFC5C;
+        }
+    }
+
+}

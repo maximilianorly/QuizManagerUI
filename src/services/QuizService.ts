@@ -140,4 +140,12 @@ export default class QuizService {
     //         // console.log(_questionsHaveAnswers);
     //     });
     // }
+
+    // EDIT QUIZ
+
+    public async updateQuiz(Quiz: IQuiz): Promise<IQuiz> {
+        const q: IQuiz = { id:0, isActive:false, name: ''};
+
+        return  q;
+    }
 }

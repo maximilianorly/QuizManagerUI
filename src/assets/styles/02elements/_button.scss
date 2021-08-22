@@ -1,0 +1,45 @@
+.button {
+    color: $soft-grey;
+    border: 0.0625rem solid $soft-grey;
+    height: 4.125rem;
+    border-radius: 0.625rem;
+    font-size: 1.25rem;
+    font-family: $app-font;
+    font-weight: bold;
+    cursor: pointer;
+
+    &--extra-small {
+        width: 8rem;
+        height: 3rem;
+    }
+
+    &--small {
+        width: 10rem;
+    }
+
+    &--medium {
+        width: 15.625rem
+    }
+
+    &--large {
+        width: 22.875rem;
+        height: 5.125rem;
+    }
+
+    &--extra-large {
+        width: 27.1875rem;
+        height: 5.8125rem;
+    }
+
+    &__close {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        outline: inherit;
+
+        &:hover {
+            opacity: 0.5;
+        }
+    }
+}
