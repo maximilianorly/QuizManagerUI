@@ -17,8 +17,21 @@
 
     &__card {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
+        position: relative;
+    }
+
+    &__active-state-button {
+        height: 2rem;
+        background: none;
+        border: 0.125rem solid $company-blue;
+        color: $company-blue;
+
+        &:hover {
+            box-shadow: 0 0 2rem -0.1875rem #6FFC5C;
+        }
     }
 
     &__card-content {

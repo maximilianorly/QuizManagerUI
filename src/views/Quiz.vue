@@ -5,6 +5,11 @@
         </header>
         <div class="quiz__content">
             <div class="card  quiz__card">
+                <div class="card__admin-set-active" v-if="userAccess.accessLevelId === 1">
+                    <button class="quiz__active-state-button button" @click="setActiveState">
+                        Set {{quizActiveStateString}}
+                    </button>
+                </div>
                 <div class="card__content quiz__card-content">
                     <div class="quiz__questions-container">
                         <div v-if="quiz" class="quiz__questions">
@@ -59,6 +64,7 @@
         public selectedQuestionData: IQuestionWithAnswers = {};
         public questionModal: boolean = false;
         public pageDescription: string = this.selectedQuiz.name;
+        public quizActiveStateString: string = '';
 
         private get user() {
             return sessionState.state.User;
@@ -94,6 +100,7 @@
             console.log('set quiz');
             // this.questionsWithAnswers = this.InUseQuestionsWithAnswers;
             console.log(this.editingQuiz);
+            this.setQuizActiveStateString();
         }
 
         private destroyed() {
@@ -119,6 +126,22 @@
         public closeModalQuestionModal() {
             this.selectedQuestionData = {};
             this.questionModal = false;
+        }
+
+        public setQuizActiveStateString(): void {
+            this.quiz.isActive ? this.quizActiveStateString = 'Inactive' : this.quizActiveStateString = 'Active';
+        }
+
+        public async setActiveState() {
+            console.log('setting is active in QUIZ')
+            await this.quizService.updateActiveState(this.quiz)
+            .then((res) => {
+                console.log(res);
+                sessionState.commitSetSelectedQuiz(res);
+                this.quiz = this.selectedQuiz;
+                console.log(this.quiz)
+                this.setQuizActiveStateString();
+            })
         }
 
         private returnToQuizzes(): void {

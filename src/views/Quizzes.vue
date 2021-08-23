@@ -1,7 +1,7 @@
 <template>
     <div class="quizzes__container">
         <header class="header__container">
-            <Header :headerDetail="pageDescription"/>
+            <Header :headerDetail="pageDescription" @addQuizClicked="showAddQuizModal($event)"/>
         </header>
         <div class="quizzes__content">
             <div class="quizzes__quiz-container card card--small" v-for="quiz in quizzes" :key="quiz.id">
@@ -21,6 +21,11 @@
                 </div>
             </div>
         </div>
+
+        <div v-if="addQuizModal" class="add-quiz__modal-container">
+            <h1 class="add-quiz__modal-title">Create Quiz</h1>
+            <AddQuizModal @closeClicked="showAddQuizModal($event)"/>
+        </div>
     </div>
 </template>
 
@@ -28,6 +33,7 @@
 import { Vue, Component, Provide } from "vue-property-decorator";
 import sessionState from "../store/SessionState";
 import Header from "../components/AppHeader.vue"
+import AddQuizModal from "../components/AddQuiz.vue";
 import QuizService from "../services/QuizService";
 import IQuiz from "../interfaces/IQuiz";
 import IUserHasAccess from "../interfaces/IUserHasAccess";
@@ -35,14 +41,16 @@ import IUserHasAccess from "../interfaces/IUserHasAccess";
     @Component({
         components: {
             Header,
+            AddQuizModal
         },
     })
-    export default class Welcome extends Vue {
+    export default class Quizzes extends Vue {
 
         private quizService = new QuizService();
         private accessLevel: IUserHasAccess = {};
         private editQuizClicked: boolean = false;
         
+        public addQuizModal: boolean = false;
         public pageDescription: string = "Available Quizzes"
 
         private get quizzes() {
@@ -65,7 +73,7 @@ import IUserHasAccess from "../interfaces/IUserHasAccess";
                     if (this.editQuizClicked) {
                         sessionState.commitSetEditingQuiz(true);
                     }
-                    
+
                     this.$router.push('/Quiz');
                 }
                 else this.$router.push('/ErrorPage');
@@ -75,6 +83,17 @@ import IUserHasAccess from "../interfaces/IUserHasAccess";
         private async editQuiz(Quiz: IQuiz) {
             this.editQuizClicked = true;
             this.continueToQuiz(Quiz);
+        }
+
+        private async showAddQuizModal() {
+            if (this.addQuizModal) {
+                await this.quizService.getQuizzes()
+                .then(() => {
+                    this.addQuizModal = !this.addQuizModal;
+                })
+            } else {
+                this.addQuizModal = !this.addQuizModal;
+            }
         }
     }
 </script>

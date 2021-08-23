@@ -28,4 +28,9 @@
         flex-direction: column;
         color: $company-blue;
     }
+
+    &__admin-set-active {
+        position: absolute;
+        top: 0.3125rem;
+    }
 }

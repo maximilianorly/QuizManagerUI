@@ -8,6 +8,11 @@
     font-weight: bold;
     cursor: pointer;
 
+    &--extra-extra-small {
+        width: 4rem;
+        height: 1.5rem
+    }
+
     &--extra-small {
         width: 8rem;
         height: 3rem;

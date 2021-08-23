@@ -6,6 +6,7 @@ import IQuiz, { IQuizWithQuestionsAndAnswers } from '../interfaces/IQuiz';
 import IQuestion, { IQuestionWithAnswers } from '../interfaces/IQuestion';
 import IQuestionAnswers from '../interfaces/IQuestionAnswers';
 import IAnswer from '../interfaces/IAnswer';
+import INewQuizWithQuestionsAndAnswers from '../interfaces/INewQuizWithQuestionsAndAnswers';
 
 export default class QuizService {
     private readonly portApi: string = "https://localhost:5001";
@@ -14,23 +15,32 @@ export default class QuizService {
     private QuestionsService = new QuestionsService();
     private AnswersService = new AnswersService();
 
+    private get userAccess() {
+        return sessionState.state.UserHasAccess;
+    }
+
     public async getQuizzes(): Promise<Array<IQuiz>> {
-        let _activeQuizzes: Array<IQuiz> = [];
+        let _quizzes: Array<IQuiz> = [];
+        let _queryString: string = `${this.portApi}/api/${this.controllerName}/Active`
         
+        if (this.userAccess.accessLevelId === 1) {
+            _queryString = `${this.portApi}/api/${this.controllerName}`   
+        }
+
         await axios
-        .get(`${this.portApi}/api/${this.controllerName}`, this.headers)
-        .then(response => {
-            if (response.status === 200) {
-                if (response.data !== '') {
-                    const _parsedRes = JSON.parse(JSON.stringify(response.data));
-                    _activeQuizzes = _parsedRes as Array<IQuiz>;
+            .get(_queryString, this.headers)
+            .then(response => {
+                if (response.status === 200) {
+                    if (response.data !== '') {
+                        const _parsedRes = JSON.parse(JSON.stringify(response.data));
+                        _quizzes = _parsedRes as Array<IQuiz>;
+                    }
                 }
-            }
-        });
+            });
 
-        sessionState.commitSetQuizzes(_activeQuizzes);
+        sessionState.commitSetQuizzes(_quizzes);
 
-        return _activeQuizzes;
+        return _quizzes;
     }
 
     public async setQuizData(Quiz: IQuiz): Promise<IQuizWithQuestionsAndAnswers> {
@@ -141,7 +151,46 @@ export default class QuizService {
     //     });
     // }
 
+    // CREATE QUIZ
+
+    public async createQuiz(NewQuiz: INewQuizWithQuestionsAndAnswers): Promise<IQuiz> {
+        console.log('creating quiz');
+        let _newQuiz: IQuizWithQuestionsAndAnswers = { isActive: false, name: NewQuiz.quizName };
+
+        await axios
+        .post(`${this.portApi}/api/${this.controllerName}`, NewQuiz, this.headers)
+        .then(response => {
+            if (response.status === 200) {
+                if (response.data !== '') {
+                    const _parsedRes = JSON.parse(JSON.stringify(response.data));
+                    _newQuiz = _parsedRes as IQuizWithQuestionsAndAnswers;
+                }
+            }
+        });
+
+        return _newQuiz;
+    }
+
     // EDIT QUIZ
+
+    public async updateActiveState(Quiz: IQuiz): Promise<IQuiz> {
+        console.log('setting isActive inside QUIZ SERVICE');
+        let _quiz: IQuiz = Quiz;
+
+        await axios
+        .put(`${this.portApi}/api/${this.controllerName}/${Quiz.id}/${Quiz.isActive}`, this.headers)
+        .then(response => {
+            if (response.status === 200) {
+                if (response.data !== '') {
+                    const _parsedRes = JSON.parse(JSON.stringify(response.data));
+
+                    _quiz = _parsedRes as IQuiz;
+                }
+            }
+        });
+
+        return _quiz;
+    }
 
     public async updateQuiz(Quiz: IQuiz): Promise<IQuiz> {
         const q: IQuiz = { id:0, isActive:false, name: ''};

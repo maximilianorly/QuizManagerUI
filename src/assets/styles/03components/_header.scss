@@ -27,7 +27,63 @@
         align-items: center;
     }
 
+    &__left {
+        width: 30%;
+        display: flex;
+    }
+
+    &__center {
+        width: 30%;
+        display: flex;
+        justify-content: center;
+    }
+
+    &__right {
+        width: 30%;
+        display: flex;
+        justify-content: flex-end;
+    }
+
     &__title {
         color: $company-blue;
+    }
+
+    &__button-group {
+        width: 60%;
+        display: flex;
+        justify-content: space-between
+    }
+
+    &__button {
+        border: 0.125rem solid $company-blue;
+        background: none;
+        padding: none;
+        color: $company-blue;
+
+        &:hover {
+            background-color: $company-blue;
+            color: $white;
+            border-color: $confirm-green;
+            box-shadow: 0 0 2rem -0.1875rem #6FFC5C;
+        }
+    }
+
+    &__hamburger-button {
+        width: 5rem;
+        height: 5rem;
+        background: none;
+        border: none;
+        padding: none;
+        cursor: pointer;
+    }
+
+    &__hamburger {
+        transition: opacity 1.5s ease;
+
+        &:hover {
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 2rem -0.1875rem #44B8FC;
+        }
     }
 }

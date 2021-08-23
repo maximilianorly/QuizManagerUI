@@ -4,15 +4,15 @@
             <div class="quiz-question__admin-buttons" v-if="editingQuiz">
                 <button class="button button--extra-small quiz-question__admin-button" @click="confirmEdit">
                     Done
-                    <img src="../assets/img/svg/confirm-icon.svg" alt="confirm icon">
+                    <img :src="require('@/assets/img/svg/confirm-icon.svg')" alt="confirm icon">
                 </button>
                 <button class="button button--extra-small quiz-question__admin-button" @click="closeModal">
                     Cancel
-                    <img src="../assets/img/svg/cancel-icon.svg" alt="cancel icon">
+                    <img :src="require('@/assets/img/svg/cancel-icon.svg')" alt="cancel icon">
                 </button>
             </div>
             <button class="button__close" @click="closeModal" v-else>
-                <img src="../assets/img/svg/close-icon.svg" alt="close icon">
+                <img :src="require('@/assets/img/svg/close-icon.svg')" alt="close icon">
             </button>
         </div>
 
@@ -51,7 +51,7 @@ import QuizService from '../services/QuizService';
     export default class QuizQuestion extends Vue {
         private quizService: QuizService = new QuizService();
         private QuizQuestionWithAnswers: IQuestionWithAnswers = {};
-        public chosenAnswer: IUserAnswerChoice = {}
+        public chosenAnswer: IUserAnswerChoice = {};
 
         private get userAnswersForQuiz() {
             return sessionState.state.UserAnswersForQuiz;

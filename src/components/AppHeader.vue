@@ -10,19 +10,25 @@
                 </h1>
             </div>
             <div class="header__right">
-                <button class="welcome__button button button--medium" @click="LogoutClicked()">
-                    Logout
-                </button>
+                <div class="header__button-group">
+                    <button class="header__button button button--extra-small" @click="AddQuiz">
+                        Add Quiz
+                    </button>
+                    <button class="header__button button button--extra-small" @click="LogoutClicked">
+                        Logout
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import { Vue, Component, Provide } from 'vue-property-decorator';
-    import IUser from '../interfaces/IUser';
-    import UserService from '../services/UserService';
-    import sessionState from "../store/SessionState";
+import { Vue, Component, Provide } from 'vue-property-decorator';
+import IUser from '../interfaces/IUser';
+import UserService from '../services/UserService';
+import sessionState from "../store/SessionState";
+import QuizService from '../services/QuizService';
     
     @Component({
         props: ["headerDetail"]
@@ -30,11 +36,19 @@
     export default class Header extends Vue {
 
         private userService = new UserService();
+        private quizService = new QuizService();
 
         public pageTitle: string = ""
+        
 
         private mounted() {
             this.pageTitle = this.$props.headerDetail;
+        }
+
+
+        public AddQuiz(event: any): void {
+            console.log('clicked');
+            this.$emit('addQuizClicked');
         }
 
         public async LogoutClicked() {
