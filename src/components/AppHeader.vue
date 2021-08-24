@@ -11,7 +11,7 @@
             </div>
             <div class="header__right">
                 <div class="header__button-group">
-                    <button class="header__button button button--extra-small" @click="AddQuiz">
+                    <button class="header__button button button--extra-small" v-if="routeName === 'Quizzes' && userAccess === 1" @click="AddQuiz">
                         Add Quiz
                     </button>
                     <button class="header__button button button--extra-small" @click="LogoutClicked">
@@ -40,6 +40,13 @@ import QuizService from '../services/QuizService';
 
         public pageTitle: string = ""
         
+        private get routeName() {
+            return this.$route.name;
+        }
+
+        private get userAccess() {
+            return sessionState.state.UserHasAccess.accessLevelId;
+        }
 
         private mounted() {
             this.pageTitle = this.$props.headerDetail;
