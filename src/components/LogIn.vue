@@ -30,12 +30,6 @@
                     <button class="log-in__log-in-button button button--small" @click="logInWithSuppliedCredentials(userCredentials)">
                         Log In
                     </button>
-
-                    <!-- <u> or </u>
-
-                    <button @click="this.createNewUserClick" class="log-in__button button button--small">
-                        Create User
-                    </button> -->
                 </div>
             </section>
         </div>
