@@ -50,7 +50,6 @@ export default class UserService {
         else {
             sessionState.commitSetErrorMessage('Could not set user access level');
         }
-        console.log(sessionState.state.UserHasAccess);
     }
 
     public async verifyCredentials(Credentials: IUserCredentials): Promise<void> {
@@ -62,10 +61,8 @@ export default class UserService {
             if (response.status === 200) {
                 const parsedRes = JSON.parse(JSON.stringify(response.data));
                 authenticationSuccessful = response.data as boolean;
-                console.log('verifying')
 
                 if (authenticationSuccessful && response.data !== '') {
-                    console.log('passed');
                     const userAccess = parsedRes as IUserHasAccess;
 
                     if (userAccess && userAccess.userId) {
@@ -98,11 +95,9 @@ export default class UserService {
         .then(response => {
             if (response.status === 200) {
                 const parsedRes = JSON.parse(JSON.stringify(response.data));
-
-                if (parsedRes !== '') {
-                    console.log('logged out successfully');
-                }
-                else {
+                
+                if (parsedRes === '') {
+                    
                     sessionState.commitSetErrorMessage('Could not logout user.')
                 }
             }

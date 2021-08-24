@@ -60,7 +60,6 @@
     export default class Quiz extends Vue {
         private quizService = new QuizService();
         private quiz: IQuizWithQuestions = { id: 0, isActive: false, name: '' };
-        // public questionsWithAnswers: Array<IQuestionWithAnswers> = [];
         public selectedQuestionData: IQuestionWithAnswers = {};
         public questionModal: boolean = false;
         public pageDescription: string = this.selectedQuiz.name;
@@ -95,11 +94,7 @@
         }
 
         private mounted() {
-            console.log('quiz mounted')
             this.quiz = this.selectedQuiz;
-            console.log('set quiz');
-            // this.questionsWithAnswers = this.InUseQuestionsWithAnswers;
-            console.log(this.editingQuiz);
             this.setQuizActiveStateString();
         }
 
@@ -133,13 +128,11 @@
         }
 
         public async setActiveState() {
-            console.log('setting is active in QUIZ')
             await this.quizService.updateActiveState(this.quiz)
             .then((res) => {
-                console.log(res);
                 sessionState.commitSetSelectedQuiz(res);
                 this.quiz = this.selectedQuiz;
-                console.log(this.quiz)
+                
                 this.setQuizActiveStateString();
             })
         }

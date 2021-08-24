@@ -57,7 +57,6 @@ export default class QuizService {
         }
 
         sessionState.commitSetSelectedQuiz(QuizWithData);
-        console.dir(QuizWithData)
         return QuizWithData;
     }
 
@@ -154,7 +153,6 @@ export default class QuizService {
     // CREATE QUIZ
 
     public async createQuiz(NewQuiz: INewQuizWithQuestionsAndAnswers): Promise<IQuiz> {
-        console.log('creating quiz');
         let _newQuiz: IQuizWithQuestionsAndAnswers = { isActive: false, name: NewQuiz.quizName };
 
         await axios
@@ -174,7 +172,6 @@ export default class QuizService {
     // EDIT QUIZ
 
     public async updateActiveState(Quiz: IQuiz): Promise<IQuiz> {
-        console.log('setting isActive inside QUIZ SERVICE');
         let _quiz: IQuiz = Quiz;
 
         await axios

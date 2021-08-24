@@ -14,7 +14,7 @@
                     <button class="header__button button button--extra-small" v-if="routeName === 'Quizzes' && userAccess === 1" @click="AddQuiz">
                         Add Quiz
                     </button>
-                    <button class="header__button button button--extra-small" @click="LogoutClicked">
+                    <button class="header__button header__button--logout button button--extra-small" @click="LogoutClicked">
                         Logout
                     </button>
                 </div>
@@ -54,7 +54,6 @@ import QuizService from '../services/QuizService';
 
 
         public AddQuiz(event: any): void {
-            console.log('clicked');
             this.$emit('addQuizClicked');
         }
 

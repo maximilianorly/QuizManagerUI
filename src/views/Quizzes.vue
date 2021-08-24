@@ -62,7 +62,6 @@ import IUserHasAccess from "../interfaces/IUserHasAccess";
         }
 
         private mounted() {
-            console.log('Mounted in Quizzes')
             this.accessLevel = this.userHasAccess;
         }
 

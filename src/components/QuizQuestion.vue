@@ -66,14 +66,10 @@ import QuizService from '../services/QuizService';
         }
 
         private setUserChosenAnswer(Answer: IQuestionAnswers): void {
-            console.log(Answer)
             this.chosenAnswer.questionId = Answer.questionId;
             this.chosenAnswer.answerId = Answer.id;
 
-            console.log(this.chosenAnswer);
-
             sessionState.commitSetCurrentUserChosenAnswer(this.chosenAnswer);
-            console.log(sessionState.state.CurrentUserChosenAnswer);
         }
 
         private confirmUserAnswerToStore(): void {

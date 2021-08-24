@@ -63,9 +63,7 @@
         }
 
         private mounted() {
-            console.log('mounted in welcome')
             this.currentUser = this.user;
-            // this.isEditQuizAvailable();
         }
 
         private destroyed() {

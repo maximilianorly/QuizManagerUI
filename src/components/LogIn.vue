@@ -67,7 +67,6 @@
         }
 
         private async logInWithSuppliedCredentials(Credentials: IUserCredentials) {
-            console.log(sessionState.state.User);
             await this.userService.changeLogInState(Credentials)
             .then(() => {
                 if (sessionState.state.UserHasAccess.userId) {

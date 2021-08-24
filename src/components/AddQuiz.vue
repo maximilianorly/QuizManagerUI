@@ -82,11 +82,8 @@ import QuizService from "../services/QuizService";
         }
 
         private AddToQuiz(QuestionIndex: number, SelectedCorrectOptionIndex: number): void {
-            console.log(this.questionsWithAnswers[QuestionIndex]);
 
             if (this.quizWithQuestionsAndAnswers.questionsWithAnswers !== undefined) {
-                // this.quizWithQuestionsAndAnswers.questionsWithAnswers.push(this.questionsWithAnswers[QuestionIndex]);
-                // MAP ANSWER OPTION TO ANSWER
 
                 this.quizWithQuestionsAndAnswers.questionsWithAnswers[QuestionIndex].question = this.questionsWithAnswers[QuestionIndex].question;
                 this.questionsWithAnswers[QuestionIndex].answerOptions.forEach((answer, index) => {
@@ -95,12 +92,6 @@ import QuizService from "../services/QuizService";
                     this.quizWithQuestionsAndAnswers.questionsWithAnswers[QuestionIndex].answers[index].isCorrect = Boolean(answer.isCorrectOption);
                 })
             }
-
-            console.log(this.quizWithQuestionsAndAnswers);
-
-            console.log(this.selectedCorrectOptions);
-            console.log(SelectedCorrectOptionIndex)
-            
         }
 
         public confirmCreateQuiz(): void {
@@ -120,7 +111,7 @@ import QuizService from "../services/QuizService";
                     }
                 })
 
-                //add check for if correct answer has been selected or if all answers are false;
+                //TODO: add check for if correct answer has been selected or if all answers are false;
             })
 
             if (this.errorMessage === '') {
