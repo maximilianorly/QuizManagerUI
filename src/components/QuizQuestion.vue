@@ -1,8 +1,11 @@
 <template>
-    <div class="quiz-question__modal">  
+    <div class="quiz-question__modal">
         <div class="quiz-question__modal-header">
+            <div v-if="editingQuiz && isUnderConstruction" class="quiz-question__under-construction-text">
+                Sorry! This functionality is currently under construction.    
+            </div>  
             <div class="quiz-question__admin-buttons" v-if="editingQuiz">
-                <button class="button button--extra-small quiz-question__admin-button" @click="confirmEdit">
+                <button v-if="!isUnderConstruction" class="button button--extra-small quiz-question__admin-button" @click="confirmEdit">
                     Done
                     <img :src="require('@/assets/img/svg/confirm-icon.svg')" alt="confirm icon">
                 </button>
@@ -15,7 +18,8 @@
                 <img :src="require('@/assets/img/svg/close-icon.svg')" alt="close icon">
             </button>
         </div>
-
+        <div v-if="editingQuiz && isUnderConstruction" class="quiz-question__under-construction">
+        </div>  
         <div class="quiz-question__content">
             <div class="quiz-question__modal--top">
                 <div class="quiz-question__question">
@@ -37,11 +41,11 @@
 </template>
 
 <script lang="ts">
-    import { Vue, Component, Provide } from 'vue-property-decorator';
-    import IUserAnswerChoice from '../interfaces/IUserAnswerChoice';
-    import IAnswer from '../interfaces/IAnswer';
-    import sessionState from '../store/SessionState';
-    import { IQuestionWithAnswers } from '../interfaces/IQuestion';
+import { Vue, Component, Provide } from 'vue-property-decorator';
+import IUserAnswerChoice from '../interfaces/IUserAnswerChoice';
+import IAnswer from '../interfaces/IAnswer';
+import sessionState from '../store/SessionState';
+import { IQuestionWithAnswers } from '../interfaces/IQuestion';
 import IQuestionAnswers from '../interfaces/IQuestionAnswers';
 import QuizService from '../services/QuizService';
 
@@ -52,6 +56,7 @@ import QuizService from '../services/QuizService';
         private quizService: QuizService = new QuizService();
         private QuizQuestionWithAnswers: IQuestionWithAnswers = {};
         public chosenAnswer: IUserAnswerChoice = {};
+        private isUnderConstruction: boolean = true;
 
         private get userAnswersForQuiz() {
             return sessionState.state.UserAnswersForQuiz;

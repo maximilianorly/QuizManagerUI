@@ -5,7 +5,7 @@
         </header>
         <div class="quiz__content">
             <div class="card  quiz__card">
-                <div class="card__admin-set-active" v-if="userAccess.accessLevelId === 1">
+                <div class="card__admin-set-active" v-if="userAccess.accessLevelId === 1 && editingQuiz">
                     <button class="quiz__active-state-button button" @click="setActiveState">
                         Set {{quizActiveStateString}}
                     </button>
