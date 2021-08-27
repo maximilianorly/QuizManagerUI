@@ -104,6 +104,7 @@
 
         private async showQuestionModal(Question: IQuestionWithAnswers) {
             if (Question.id) {
+                this.selectedQuestionData.id = Question.id;
                 this.selectedQuestionData.question = Question.question;
 
                 if (this.userAccess.accessLevelId !== UserAccessEnum.Restricted) {

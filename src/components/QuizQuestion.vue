@@ -23,17 +23,26 @@
         <div class="quiz-question__content">
             <div class="quiz-question__modal--top">
                 <div class="quiz-question__question">
-                    <input v-if="editingQuiz" class="quiz-question__admin-edit-input--question" type="text" :placeholder="`Edit Question: ${quizQuestion.question}...`">
+                    <input v-if="editingQuiz" v-model="questionInput" class="quiz-question__admin-edit-input--question" type="text" :placeholder="`Edit Question: ${QuizQuestionWithAnswers.question}...`">
                     <h1 v-else>
-                        {{quizQuestion.question}}
+                        {{QuizQuestionWithAnswers.question}}
                     </h1>
                 </div>
             </div>
             <div class="quiz-question__modal--bottom">
                 <div class="quiz-question__answers">
-                    <button class="quiz-question__answer button button--extra-large" v-for="answer in QuizQuestionWithAnswers.answerOptions" :key="answer.id" @click="setUserChosenAnswer(answer)">
-                        {{ answer.option }}
-                    </button>
+                    <div class="quiz-question__answer-container" v-for="(answer, index) in QuizQuestionWithAnswers.answerOptions" :key="answer.id">
+                        <div v-if="editingQuiz" class="quiz-question__edit-answer-container">
+                            <input type="radio" :id="`answerInput${[index]}__true`" :name="`answerInput${[index]}`" v-model="answerInputs[index].isCorrect" :value="true">
+                            <label :for="`answerInput${[index]}__true`">True</label>
+                            <input type="radio" :id="`answerInput${[index]}__false`" :name="`answerInput${[index]}`" v-model="answerInputs[index].isCorrect" :value="false">
+                            <label :for="`answerInput${[index]}__false`">False</label>
+                            <input v-model="answerInputs[index].answer" class="quiz-quesrion__admin-edit-input--answer" type="text" :placeholder="`Edit Answer: ${index + 1}...`">
+                        </div>
+                        <button v-else class="quiz-question__answer button button--extra-large" @click="setUserChosenAnswer(answer)">
+                            {{ answer.option }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,6 +57,8 @@ import sessionState from '../store/SessionState';
 import { IQuestionWithAnswers } from '../interfaces/IQuestion';
 import IQuestionAnswers from '../interfaces/IQuestionAnswers';
 import QuizService from '../services/QuizService';
+import INewQuestionWithAnswers from '../interfaces/INewQuestionWithAnswer';
+import INewAnswer from '../interfaces/InewAnswer';
 
      @Component({
          props: ["quizQuestion"]
@@ -55,8 +66,11 @@ import QuizService from '../services/QuizService';
     export default class QuizQuestion extends Vue {
         private quizService: QuizService = new QuizService();
         private QuizQuestionWithAnswers: IQuestionWithAnswers = {};
+        private isUnderConstruction: boolean = false;
+
         public chosenAnswer: IUserAnswerChoice = {};
-        private isUnderConstruction: boolean = true;
+        public questionInput: string = '';
+        public answerInputs: Array<INewAnswer> = [{ answer: '', isCorrect: false }, { answer: '', isCorrect: false }, { answer: '', isCorrect: false }, { answer: '', isCorrect: false }];
 
         private get userAnswersForQuiz() {
             return sessionState.state.UserAnswersForQuiz;
@@ -64,6 +78,10 @@ import QuizService from '../services/QuizService';
 
         private get editingQuiz() {
             return sessionState.state.EditingQuiz;
+        }
+
+        private get selectedQuiz() {
+            return sessionState.state.SelectedQuiz;
         }
 
         private mounted() {
@@ -95,7 +113,20 @@ import QuizService from '../services/QuizService';
         }
 
         public async confirmEdit(event: any) {
-            this.$emit('closeClicked');
+            if (this.questionInput === '') {
+                this.questionInput = this.QuizQuestionWithAnswers.question;
+            }
+
+            const _questionWithAnswers: INewQuestionWithAnswers = {
+                questionId: this.QuizQuestionWithAnswers.id,
+                question: this.questionInput,
+                answers: this.answerInputs
+            };
+            
+            this.quizService.updateQuizQuestion(this.selectedQuiz.id, _questionWithAnswers)
+            .then(() => {
+                this.$emit('closeClicked');
+            });
         }
     }
 </script>

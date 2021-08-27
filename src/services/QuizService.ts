@@ -7,6 +7,7 @@ import IQuestion, { IQuestionWithAnswers } from '../interfaces/IQuestion';
 import IQuestionAnswers from '../interfaces/IQuestionAnswers';
 import IAnswer from '../interfaces/IAnswer';
 import INewQuizWithQuestionsAndAnswers from '../interfaces/INewQuizWithQuestionsAndAnswers';
+import INewQuestionWithAnswers from '@/interfaces/INewQuestionWithAnswer';
 
 export default class QuizService {
     private readonly portApi: string = "https://localhost:5001";
@@ -189,9 +190,21 @@ export default class QuizService {
         return _quiz;
     }
 
-    public async updateQuiz(Quiz: IQuiz): Promise<IQuiz> {
-        const q: IQuiz = { id:0, isActive:false, name: ''};
+    public async updateQuizQuestion(QuizId: number, QuestionWithAnswers: INewQuestionWithAnswers): Promise<Array<IQuestion>> {
+        let _quizQuestions: Array<IQuestion> = [];
 
-        return  q;
+        await axios
+        .put(`${this.portApi}/api/${this.controllerName}/${QuizId}`, QuestionWithAnswers, this.headers)
+        .then(response => {
+            if (response.status === 200) {
+                if (response.data !== '') {
+                    const _parsedRes = JSON.parse(JSON.stringify(response.data));
+
+                    _quizQuestions = _parsedRes;
+                }
+            }
+        });
+
+        return _quizQuestions;
     }
 }
