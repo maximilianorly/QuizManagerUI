@@ -86,10 +86,10 @@ import QuizService from "../services/QuizService";
             if (this.quizWithQuestionsAndAnswers.questionsWithAnswers !== undefined) {
 
                 this.quizWithQuestionsAndAnswers.questionsWithAnswers[QuestionIndex].question = this.questionsWithAnswers[QuestionIndex].question;
-                this.questionsWithAnswers[QuestionIndex].answerOptions.forEach((answer, index) => {
-                    this.quizWithQuestionsAndAnswers.questionsWithAnswers[QuestionIndex].answers[index] = { answer: '', isCorrect: false }
-                    this.quizWithQuestionsAndAnswers.questionsWithAnswers[QuestionIndex].answers[index].answer = answer.option;
-                    this.quizWithQuestionsAndAnswers.questionsWithAnswers[QuestionIndex].answers[index].isCorrect = Boolean(answer.isCorrectOption);
+                this.questionsWithAnswers[QuestionIndex].answerOptions?.forEach((answer, index) => {
+                    this.quizWithQuestionsAndAnswers.questionsWithAnswers![QuestionIndex].answers![index] = { answer: '', isCorrect: false }
+                    this.quizWithQuestionsAndAnswers.questionsWithAnswers![QuestionIndex].answers![index].answer = answer.option;
+                    this.quizWithQuestionsAndAnswers.questionsWithAnswers![QuestionIndex].answers![index].isCorrect = Boolean(answer.isCorrectOption);
                 })
             }
         }
@@ -100,12 +100,12 @@ import QuizService from "../services/QuizService";
                 sessionState.commitSetErrorMessage('Quizzes must have a name');
             }
 
-            this.quizWithQuestionsAndAnswers.questionsWithAnswers.forEach((question) => {
+            this.quizWithQuestionsAndAnswers.questionsWithAnswers!.forEach((question) => {
                 if (!question.question) {
                     sessionState.commitSetErrorMessage('You must have 4 questions');
                 }
 
-                question.answers.forEach((answer) => {
+                question.answers?.forEach((answer) => {
                     if(!answer.answer) {
                         sessionState.commitSetErrorMessage('All 4 questions must have 4 answers and a chosen correct answer');
                     }

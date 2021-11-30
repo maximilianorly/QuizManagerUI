@@ -69,7 +69,7 @@ import INewAnswer from '../interfaces/InewAnswer';
         private isUnderConstruction: boolean = false;
 
         public chosenAnswer: IUserAnswerChoice = {};
-        public questionInput: string = '';
+        public questionInput = '' as string | undefined;
         public answerInputs: Array<INewAnswer> = [{ answer: '', isCorrect: false }, { answer: '', isCorrect: false }, { answer: '', isCorrect: false }, { answer: '', isCorrect: false }];
 
         private get userAnswersForQuiz() {
@@ -82,6 +82,10 @@ import INewAnswer from '../interfaces/InewAnswer';
 
         private get selectedQuiz() {
             return sessionState.state.SelectedQuiz;
+        }
+
+        private get user() {
+            return sessionState.state.User;
         }
 
         private mounted() {
@@ -98,7 +102,7 @@ import INewAnswer from '../interfaces/InewAnswer';
         private confirmUserAnswerToStore(): void {
             let _storedChosenAnswers = this.userAnswersForQuiz;
 
-            // remove answer for current question before adding re-chosen answer
+            // removes answer for current question before adding re-chosen answer
             _storedChosenAnswers = _storedChosenAnswers.filter(answer => {
                 answer.questionId != this.QuizQuestionWithAnswers.id;
             });
@@ -123,7 +127,7 @@ import INewAnswer from '../interfaces/InewAnswer';
                 answers: this.answerInputs
             };
             
-            this.quizService.updateQuizQuestion(this.selectedQuiz.id, _questionWithAnswers)
+            this.quizService.updateQuizQuestion(this.selectedQuiz.id as number, this.user.id as number, _questionWithAnswers)
             .then(() => {
                 this.$emit('closeClicked');
             });

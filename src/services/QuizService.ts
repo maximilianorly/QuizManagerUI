@@ -190,11 +190,12 @@ export default class QuizService {
         return _quiz;
     }
 
-    public async updateQuizQuestion(QuizId: number, QuestionWithAnswers: INewQuestionWithAnswers): Promise<Array<IQuestion>> {
+    public async updateQuizQuestion(QuizId: number, UserId: number, QuestionWithAnswers: INewQuestionWithAnswers): Promise<Array<IQuestion>> {
         let _quizQuestions: Array<IQuestion> = [];
+        console.log(UserId)
 
         await axios
-        .put(`${this.portApi}/api/${this.controllerName}/${QuizId}`, QuestionWithAnswers, this.headers)
+        .put(`${this.portApi}/api/${this.controllerName}/updateQuestion/${QuizId}/${UserId}`, QuestionWithAnswers, this.headers)
         .then(response => {
             if (response.status === 200) {
                 if (response.data !== '') {
