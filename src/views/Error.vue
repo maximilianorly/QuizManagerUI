@@ -9,7 +9,6 @@
     import IUser from '../interfaces/IUser';
     import IUserCredentials from '../interfaces/IUserCredentials';
     import UserService from '../services/UserService';
-    import userAccessLevelService from '../services/UserAccessLevelService'
     import sessionState from '../store/SessionState';
 
     @Component({

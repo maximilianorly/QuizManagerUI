@@ -1,5 +1,4 @@
 import axios from 'axios';
-import IUserCredentials from '../interfaces/IUserCredentials';
 import sessionState from '../store/SessionState';
 import IQuestionAnswers from '../interfaces/IQuestionAnswers';
 
@@ -11,8 +10,9 @@ export default class AnswersService {
     public async getAnswersForQuestionId(QuestionId: number): Promise<Array<IQuestionAnswers>> {
         let _answersForActiveQuestions: Array<IQuestionAnswers> = [];
 
+        const accessLevel = sessionState.state.UserHasAccess;
         await axios
-        .get(`${this.portApi}/api/${this.controllerName}/GetAllAnswerOptionsForQuestion/${QuestionId}`, this.headers)
+        .post(`${this.portApi}/api/${this.controllerName}/GetAllAnswerOptionsForQuestion/${QuestionId}`, accessLevel, this.headers)
         .then(response => {
             if (response.status === 200) {
                 if (response.data !== '') {

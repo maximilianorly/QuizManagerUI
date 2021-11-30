@@ -1,27 +1,35 @@
 <template>
-    <div class="component__container">
-        <div class="welcome__content">
-            <section class="welcome__headers">
-                <h1 class="welcome__title">
-                    WELCOME {{ this.currentUser.toUpperCase() }}
-                </h1>
-                <h6 class="welcome__direction">
+    <div class="welcome__container card">
+        <div class="welcome__content card__content">
+            <section class="welcome__headers card__headers">
+                <div class="welcome__welcome-title-group">
+                    <h1 class="welcome__title">
+                        Welcome
+                    </h1>
+                    <h2 class="welcome__title welcome__user-name">
+                        {{ this.currentUser.firstName }}
+                    </h2>
+                </div>
+                <h3 class="welcome__direction">
                     {{ this.accessMessage }}
-                </h6>
+                </h3>
             </section>
 
             <section class="welcome__user-actions">
                 <div class="welcome__user-actions-button-container">
-                    <button class="welcome__button button button--medium" @click="nextRoute()">
-                        Start Quiz
+                    <button class="welcome__welcome-button button button--medium" @click="getQuizzes()">
+                        Continue
                     </button>
                 </div>
-                <div v-if="showEditQuizButton" class="welcome__user-actions-button-container">
+                <!-- <div v-if="showEditQuizButton" class="welcome__user-actions-button-container">
                     <button class="welcome__button button button--medium">
                         Edit Quiz
                     </button>
-                </div>
+                </div> -->
             </section>
+            <div class="welcome__company-logo">
+                <img class="company-logo" src="../assets/img/svg/WebbiSkools.svg" alt="Company Logo">
+            </div>
         </div>
     </div>
 </template>
@@ -32,15 +40,15 @@
     import IUser from '../interfaces/IUser';
     import UserAccessEnum from '../enums/UserAccessEnum';
     import QuizService from '../services/QuizService';
+    import UserService from '../services/UserService';
 
     @Component({})
     export default class Welcome extends Vue {
-        private currentUser: string = this.user.firstName;
-        private userAccessLevel: number = this.accessLevel.accessLevelId;
+        private currentUser: IUser = {};
+        private userAccessLevel: number = 0;
         private showEditQuizButton: boolean = false;
         private quizService = new QuizService();
-        // private ready: boolean = false;
-        // private checkReady;
+        private userService: UserService = new UserService();
 
         private get user() {
             return sessionState.state.User;
@@ -55,11 +63,10 @@
         }
 
         private mounted() {
-            this.isEditQuizAvailable();
+            this.currentUser = this.user;
         }
 
         private destroyed() {
-            // clearInterval(this.checkReady);
         }
 
         private isEditQuizAvailable() {
@@ -68,23 +75,30 @@
             }
         }
 
-        //calling on 'startQuizClick'
-        // private async getQuizQuestions() {
-        //     await this.quizService.getActiveQuestions()
-        //     .then((response) => {
-        //     })
+        public async LogoutClicked() {
+            await this.userService.changeLogInState()
+            .then(() => {
+                if (!sessionState.state.ErrorMessage) {
+                    this.$router.push('/');
+                }
+                else {
+                    this.$router.push('/ErrorPage');
+                }
+            });
+        }
 
-        //     if (sessionState.state.InUseQuestions[0]) {
-        //         console.log(sessionState.state.InUseQuestions[0]);
-        //         this.nextRoute();
-        //     }
-        //     else {
-        //         this.$router.push('/ErrorPage')
-        //     }
-        // }
+        private async getQuizzes() {
+            await this.quizService.getQuizzes()
+            .then(() => {
+                if (!sessionState.state.ErrorMessage) {
+                    this.nextRoute();
+                }
+                else this.$router.push('/ErrorPage');
+            });
+        }
 
         private nextRoute() {
-            this.$router.push('/Quiz');
+            this.$router.push('/Quizzes');
         }
         
     }

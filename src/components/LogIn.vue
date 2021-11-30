@@ -1,29 +1,33 @@
 <template>
-    <div class="component__container">
-        <div class="log-in__content">
-            <section class="log-in__headers">
+    <div class="log-in__container card">
+        <div v-if="!createUser" class="log-in__content card__content">
+            <section class="log-in__headers card__headers">
                 <h1 class="log-in__title">
                     QUIZTIME
                 </h1>
-                <h6 class="log-in__direction">
-                    Please enter Log In details to access.
-                </h6>
+                
+                <div class="log-in__company-logo">
+                    <img class="company-logo" src="../assets/img/svg/WebbiSkools.svg" alt="Company Logo">
+                </div>
             </section>
 
             <section class="log-in__user-data-fields">
-                <h6 class="log-in__errorMessage" v-if="errorMessage !== ''">
+                <h3 class="log-in__direction">
+                    Please enter Log In details to access.
+                </h3>
+                <h3 class="log-in__errorMessage" v-if="errorMessage !== ''">
                     {{ errorMessage }}
-                </h6>
+                </h3>
                 <div class="log-in__user-data-input-container">
-                    <input type="text" placeholder="Username" v-model="userCredentials.Username" class="log-in__user-data-input">
+                    <input type="text" placeholder="Username" v-model="userCredentials.Username" class="log-in__user-data-input input">
                 </div>
 
                 <div class="log-in__user-data-input-container">
-                    <input type="password" placeholder="Password" v-model="userCredentials.Password" class="log-in__user-data-input">
+                    <input type="password" placeholder="Password" v-model="userCredentials.Password" class="log-in__user-data-input input">
                 </div>
 
                 <div class="log-in__button-container">
-                    <button class="log-in__button button button--small" @click="logInWithSuppliedCredentials(userCredentials)">
+                    <button class="log-in__log-in-button button button--small" @click="logInWithSuppliedCredentials(userCredentials)">
                         Log In
                     </button>
                 </div>
@@ -37,7 +41,6 @@
     import IUser from '../interfaces/IUser';
     import IUserCredentials from '../interfaces/IUserCredentials';
     import UserService from '../services/UserService';
-    import userAccessLevelService from '../services/UserAccessLevelService'
     import sessionState from '../store/SessionState';
     import QuizService from '../services/QuizService';
 
@@ -51,8 +54,8 @@
         private userCredentials: IUserCredentials = { Username: "", Password: ""};
         private userService: UserService = new UserService();
         private quizService: QuizService = new QuizService();
-        private userAccessService: userAccessLevelService = new userAccessLevelService()
         private errorMessage: string = '';
+        private createUser: boolean = false;
 
         private get user() {
             return sessionState.state.User;
@@ -63,28 +66,15 @@
             sessionState.commitSetSessionState(sessionState.state);
         }
 
-        private logInWithSuppliedCredentials(Credentials: IUserCredentials) {
-            this.userService.verifyCredentials(Credentials)
+        private async logInWithSuppliedCredentials(Credentials: IUserCredentials) {
+            await this.userService.changeLogInState(Credentials)
             .then(() => {
-                if (sessionState.user.id) {
+                if (sessionState.state.UserHasAccess.userId) {
                     this.errorMessage = '';
-                    this.getUserAccessLevel(sessionState.user.id);
-                }
-            });
-        }
-
-        private getUserAccessLevel(UserId: number) {
-            this.userAccessService.getUserAccessLevelByUserId(UserId)
-            .then(async () => {
-                if (sessionState.state.UserHasAccess.accessLevelId) {
-                    await this.getQuizQuestions().then(() => {
-
-                        this.nextRoute();
-                    })
+                    this.nextRoute();
                 }
                 else {
-                    // this.setErrorMessage();
-                    this.$router.push('/ErrorPage')
+                    this.errorMessage = 'User with these credentials does not exist.'
                 }
             });
         }
@@ -101,6 +91,10 @@
 
         private nextRoute() {
             this.$router.push('/Welcome')
+        }
+
+        private createNewUserClick() {
+            this.createUser = !this.createUser;
         }
     };
 </script>

@@ -1,5 +1,6 @@
 import IUser from '../interfaces/IUser';
 import IUserHasAccess from '../interfaces/IUserHasAccess';
+import IQuiz, { IQuizWithQuestionsAndAnswers } from '../interfaces/IQuiz';
 import IQuestion, { IQuestionWithAnswers } from '../interfaces/IQuestion';
 import IQuestionAnswers from '../interfaces/IQuestionAnswers';
 import IUserAnswerChoice from '../interfaces/IUserAnswerChoice';
@@ -11,11 +12,14 @@ export interface ISessionState {
     UserHasAccess: IUserHasAccess,
     AccessMessage: string,
     ErrorMessage: string,
+    Quizzes: Array<IQuiz>,
+    SelectedQuiz: IQuizWithQuestionsAndAnswers,
     InUseQuestions: Array<IQuestion>,
     QuestionAnswers: Array<IQuestionAnswers>,
     InUseQuestionsWithAnswers: Array<IQuestionWithAnswers>,
     CurrentUserChosenAnswer: IUserAnswerChoice,
     UserAnswersForQuiz: Array<IUserAnswerChoice>,
+    EditingQuiz: boolean;
 }
 
 const initialSessionState: ISessionState = {
@@ -23,11 +27,14 @@ const initialSessionState: ISessionState = {
     UserHasAccess: { id: 0, accessLevelId: 0, userId: 0 },
     AccessMessage: '',
     ErrorMessage: '',
+    Quizzes: [],
+    SelectedQuiz: { id: 0, isActive: false, name: '', questions: [], answers: [] },
     InUseQuestions: [],
     QuestionAnswers: [],
     InUseQuestionsWithAnswers: [],
     CurrentUserChosenAnswer: { questionId: 0, answerId: 0 },
     UserAnswersForQuiz: [],
+    EditingQuiz: false,
 }
 
 const a = getStoreBuilder<IRootState>().module('sessionState', initialSessionState)
@@ -38,11 +45,14 @@ const userGetter = a.read(state => state.User, 'User');
 const userHasAccessGetter = a.read(state => state.UserHasAccess, 'UserHasAccess');
 const accessMessageGetter = a.read(state => state.AccessMessage, 'AccessMessage');
 const errorMessageGetter = a.read(state => state.ErrorMessage, 'ErrorMessage');
+const quizzesGetter = a.read(state => state.Quizzes, 'Quizzes');
+const selectedQuizGetter = a.read(state => state.SelectedQuiz, 'SelectedQuiz');
 const inUseQuestionsGetter = a.read(state => state.InUseQuestions, 'InUseQuestions');
 const questionAnswersGetter = a.read(state => state.QuestionAnswers, 'QuestionAnswers');
 const inUseQuestionsWithAnswersGetter = a.read(state => state.InUseQuestionsWithAnswers, 'InUseQuestionsWithAnswers');
 const currentUserChosenAnswerGetter = a.read(state => state.CurrentUserChosenAnswer, 'CurrentUserChosenAnswer');
 const userAnswersForQuizGetter = a.read(state => state.UserAnswersForQuiz, 'UserAnswersForQuiz');
+const editingQuizGetter = a.read(state => state.EditingQuiz, 'EditingQuiz');
 
 // mutations
 function setSessionState(state: ISessionState, sessionState: ISessionState): void {
@@ -65,6 +75,14 @@ function setErrorMessage(state: ISessionState, errorMessage: string): void {
     state.ErrorMessage = errorMessage;
 }
 
+function setQuizzes(state: ISessionState, quizzes: Array<IQuiz>): void {
+    state.Quizzes = quizzes;
+}
+
+function setSelectedQuiz(state: ISessionState, SelectedQuiz: IQuizWithQuestionsAndAnswers): void {
+    state.SelectedQuiz = SelectedQuiz;
+}
+
 function setInUseQuestions(state: ISessionState, inUseQuestions: Array<IQuestion>): void {
     state.InUseQuestions = inUseQuestions;
 }
@@ -78,11 +96,16 @@ function setInUseQuestionsWithAnswers(state: ISessionState, inUseQuestionsWithAn
 }
 
 function setCurrentUserChosenAnswer(state: ISessionState, currentUserChosenAnswer: IUserAnswerChoice): void {
-    state.CurrentUserChosenAnswer = currentUserChosenAnswer;
+    state.CurrentUserChosenAnswer.questionId = currentUserChosenAnswer.questionId;
+    state.CurrentUserChosenAnswer.answerId = currentUserChosenAnswer.answerId;
 }
 
 function setUserAnswersForQuiz(state: ISessionState, userAnswersForQuiz: Array<IUserAnswerChoice>): void {
     state.UserAnswersForQuiz = userAnswersForQuiz;
+}
+
+function setEditingQuiz(state: ISessionState, editingQuiz: boolean): void {
+    state.EditingQuiz = editingQuiz;
 }
 
 // action
@@ -91,11 +114,14 @@ async function initialiseSession(context: BareActionContext<ISessionState, IRoot
     sessionState.commitSetUserHasAccess(initialSessionState.UserHasAccess);
     sessionState.commitSetAccessMessage(initialSessionState.AccessMessage);
     sessionState.commitSetErrorMessage(initialSessionState.ErrorMessage);
+    sessionState.commitSetQuizzes(initialSessionState.Quizzes);
+    sessionState.commitSetSelectedQuiz(initialSessionState.SelectedQuiz);
     sessionState.commitSetInUseQuestions(initialSessionState.InUseQuestions);
     sessionState.commitSetQuestionAnswers(initialSessionState.QuestionAnswers);
     sessionState.commitSetInUseQuestionsWithAnswers(initialSessionState.InUseQuestionsWithAnswers);
     sessionState.commitSetCurrentUserChosenAnswer(initialSessionState.CurrentUserChosenAnswer);
     sessionState.commitSetUserAnswersForQuiz(initialSessionState.UserAnswersForQuiz);
+    sessionState.commitSetEditingQuiz(initialSessionState.EditingQuiz);
     
 }
 
@@ -124,6 +150,14 @@ const sessionState = {
         return errorMessageGetter();
     },
 
+    get quizzes(): Array<IQuiz> {
+        return quizzesGetter();
+    },
+
+    get selectedQuiz(): IQuizWithQuestionsAndAnswers{
+        return selectedQuizGetter();
+    },
+
     get inUseQuestions(): Array<IQuestion> {
         return inUseQuestionsGetter();
     },
@@ -144,17 +178,24 @@ const sessionState = {
         return userAnswersForQuizGetter();
     },
 
+    get editingQuiz(): boolean {
+        return editingQuizGetter();
+    },
+
     // mutations
     commitSetSessionState: a.commit(setSessionState),
     commitSetUser: a.commit(setUser),
     commitSetUserHasAccess: a.commit(setUserHasAccess),
     commitSetAccessMessage: a.commit(setAccessMessage),
     commitSetErrorMessage: a.commit(setErrorMessage),
+    commitSetQuizzes: a.commit(setQuizzes),
+    commitSetSelectedQuiz: a.commit(setSelectedQuiz),
     commitSetInUseQuestions: a.commit(setInUseQuestions),
     commitSetQuestionAnswers: a.commit(setQuestionAnswers),
     commitSetInUseQuestionsWithAnswers: a.commit(setInUseQuestionsWithAnswers),
     commitSetCurrentUserChosenAnswer: a.commit(setCurrentUserChosenAnswer),
     commitSetUserAnswersForQuiz: a.commit(setUserAnswersForQuiz),
+    commitSetEditingQuiz: a.commit(setEditingQuiz),
 
 };
 

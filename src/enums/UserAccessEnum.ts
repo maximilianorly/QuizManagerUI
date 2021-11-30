@@ -2,7 +2,7 @@ export enum UserAccess {
     None,
     Admin,
     UserWithAnswerAccess,
-    Player
+    Restricted
 }
 
 export default UserAccess;
